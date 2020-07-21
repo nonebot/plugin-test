@@ -6,11 +6,74 @@
           <v-img src="@/assets/logo.png"></v-img>
         </v-list-item-avatar>
         <v-list-item-content>
-          <v-list-item-title>NoneBot</v-list-item-title>
+          <v-list-item-title><h2>NoneBot</h2></v-list-item-title>
         </v-list-item-content>
       </v-list-item>
 
       <v-divider></v-divider>
+
+      <v-toolbar dense flat>
+        <v-toolbar-title>分组</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn icon small>
+          <v-icon small>fa-folder-plus</v-icon>
+        </v-btn>
+      </v-toolbar>
+
+      <v-list dense shaped expand subheader>
+        <v-list-group
+          v-for="(group, index) in groups"
+          :key="index"
+          :value="true"
+        >
+          <template v-slot:activator>
+            <v-list-item-title>{{ group.name }}</v-list-item-title>
+            <v-list-item-icon>
+              <v-btn icon small
+                ><v-icon small>fa-chevron-up</v-icon></v-btn
+              ></v-list-item-icon
+            >
+            <v-list-item-icon>
+              <v-btn icon small
+                ><v-icon small>fa-chevron-down</v-icon></v-btn
+              ></v-list-item-icon
+            >
+            <v-list-item-icon>
+              <v-btn icon small
+                ><v-icon small>fa-trash-alt</v-icon></v-btn
+              ></v-list-item-icon
+            >
+          </template>
+          <template v-slot:appendIcon>
+            <v-icon small>fa-chevron-down</v-icon>
+          </template>
+
+          <draggable
+            v-model="group.items"
+            group="group"
+            draggable=".item"
+            :sort="false"
+          >
+            <v-subheader slot="header" inset>Nothing here...</v-subheader>
+            <transition-group>
+              <v-list-item
+                class="item"
+                v-for="item in group.items"
+                :key="item.created_at"
+                link
+              >
+                <v-list-item-avatar :size="28">
+                  <v-icon small>fa-grip-vertical</v-icon>
+                </v-list-item-avatar>
+                <v-list-item-title>{{ item.name }}</v-list-item-title>
+                <v-list-item-icon>
+                  <v-btn icon small><v-icon small>fa-trash-alt</v-icon></v-btn>
+                </v-list-item-icon>
+              </v-list-item>
+            </transition-group>
+          </draggable>
+        </v-list-group>
+      </v-list>
     </v-navigation-drawer>
 
     <v-app-bar app color="transparent" flat absolute>
@@ -65,11 +128,35 @@
 </template>
 
 <script>
+import draggable from "vuedraggable";
+
 export default {
   name: "App",
-
+  components: {
+    draggable,
+  },
   data: () => ({
     drawer: true,
+    groups: [
+      {
+        name: "默认分组",
+        items: [
+          {
+            name: "something2",
+            created_at: 1595311828124,
+          },
+        ],
+      },
+      {
+        name: "分组2",
+        items: [
+          {
+            name: "something1",
+            created_at: 1595311828130,
+          },
+        ],
+      },
+    ],
   }),
 };
 </script>
