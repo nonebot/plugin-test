@@ -5,7 +5,6 @@ import os
 from typing import Tuple, Optional
 
 
-# TODO: test running nonebot
 def get_template_static() -> Tuple[Optional[str], Optional[str]]:
     path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "dist")
     template = os.path.join(path, "index.html")

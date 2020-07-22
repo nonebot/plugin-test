@@ -10,6 +10,7 @@ import router from "./router";
 // axios
 import "./plugins/axios";
 
+// highlight.js
 import hljs from "highlight.js/lib/core";
 import json from "highlight.js/lib/languages/json";
 import "highlight.js/styles/tomorrow-night.css";
