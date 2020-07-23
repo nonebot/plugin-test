@@ -25,11 +25,11 @@
 
       <v-list dense shaped expand subheader>
         <v-list-group
+          v-model="group.expand"
           class="group"
           color="#d12e2e"
           v-for="(group, index) in groups"
           :key="index"
-          :value="true"
         >
           <template v-slot:activator>
             <v-list-item-title>{{ group.name }}</v-list-item-title>
@@ -62,23 +62,28 @@
             <v-icon small class="ml-4">fa-caret-up</v-icon>
           </template>
 
-          <draggable v-model="group.items" group="group" draggable=".item">
+          <draggable
+            v-model="group.tests"
+            group="group"
+            draggable=".item"
+            @change="onDragChange"
+          >
             <!-- <transition-group> -->
-            <v-subheader v-show="group.items.length == 0" slot="header" inset
+            <v-subheader v-show="group.tests.length == 0" slot="header" inset
               >Nothing here...</v-subheader
             >
             <v-list-item
               class="item"
               color="#d12e2e"
-              v-for="(item, itemIndex) in group.items"
+              v-for="(item, itemIndex) in group.tests"
               :key="item.created_at"
               link
               exact
               :to="{
                 name: 'frontend-restore',
-                params: { id: item.created_at },
-                prop: { data: item.data },
+                params: { groupName: group.name, testName: item.name },
               }"
+              @click="pushHistory(group.name, item.name, item.data)"
             >
               <v-list-item-avatar :size="28">
                 <v-icon small>fa-grip-vertical</v-icon>
@@ -88,12 +93,12 @@
                 <v-btn
                   icon
                   small
-                  @click.prevent="openItemModal(index, itemIndex)"
+                  @click.prevent="openTestModal(index, itemIndex)"
                   ><v-icon small>fa-edit</v-icon></v-btn
                 >
               </v-list-item-icon>
               <v-list-item-icon>
-                <v-btn icon small @click.prevent="deleteItem(index, itemIndex)"
+                <v-btn icon small @click.prevent="deleteTest(index, itemIndex)"
                   ><v-icon small>fa-trash-alt</v-icon></v-btn
                 >
               </v-list-item-icon>
@@ -108,7 +113,12 @@
       <v-card>
         <v-card-title class="headline">新建分组</v-card-title>
         <v-card-text>
-          <v-form ref="newGroupForm" v-model="newGroupValid" lazy-validation>
+          <v-form
+            ref="newGroupForm"
+            v-model="newGroupValid"
+            lazy-validation
+            @submit.prevent="appendGroup()"
+          >
             <v-text-field
               label="分组名"
               v-model="newGroupName"
@@ -135,7 +145,12 @@
       <v-card>
         <v-card-title class="headline">修改分组</v-card-title>
         <v-card-text>
-          <v-form ref="groupForm" v-model="groupValid" lazy-validation>
+          <v-form
+            ref="groupForm"
+            v-model="groupValid"
+            lazy-validation
+            @submit.prevent="changeGroup()"
+          >
             <v-text-field
               label="分组名"
               v-model="groupName"
@@ -162,7 +177,12 @@
       <v-card>
         <v-card-title class="headline">修改名称</v-card-title>
         <v-card-text>
-          <v-form ref="itemForm" v-model="itemValid" lazy-validation>
+          <v-form
+            ref="itemForm"
+            v-model="itemValid"
+            lazy-validation
+            @submit.prevent="changeTest()"
+          >
             <v-text-field
               label="名称"
               v-model="itemName"
@@ -178,14 +198,14 @@
             text
             color="primary"
             :disabled="!itemValid"
-            @click="changeItem()"
+            @click="changeTest()"
             >确定</v-btn
           >
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <v-app-bar app color="transparent" flat>
+    <v-app-bar app color="white" flat>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
       <!-- <div class="d-flex align-center">
@@ -215,11 +235,15 @@
 
     <v-main>
       <v-container fluid>
-        <router-view></router-view>
+        <router-view
+          :groupName="currentGroup"
+          :testName="currentTest"
+          :testData="currentTestData"
+        ></router-view>
       </v-container>
     </v-main>
 
-    <v-footer app color="transparent" padless>
+    <v-footer app color="white" padless>
       <v-container class="pa-0">
         <v-row align="center" justify="center">
           <v-col class="text-center" cols="auto">
@@ -246,33 +270,12 @@ export default {
   },
   data: () => ({
     drawer: true,
-    // TODO: store groups in vuex and localstorage
-    groups: [
-      {
-        name: "默认分组",
-        editable: false,
-        removable: false,
-        items: [
-          {
-            name: "something2",
-            created_at: 1595311828124,
-            data: {},
-          },
-        ],
-      },
-      {
-        name: "分组2",
-        editable: true,
-        removable: true,
-        items: [
-          {
-            name: "something1",
-            created_at: 1595311828130,
-            data: {},
-          },
-        ],
-      },
-    ],
+
+    // groups: this.$store.state.groups,
+    groups: [],
+    currentGroup: "",
+    currentTest: "",
+    currentTestData: {},
 
     required: (v) => !!v || "分组名不能为空！",
     newGroupName: "",
@@ -287,9 +290,31 @@ export default {
     itemModal: false,
     itemValid: true,
   }),
+  watch: {
+    groups: {
+      deep: true,
+      handler: function (value) {
+        this.$store.dispatch("updateGroups", value);
+      },
+    },
+  },
   methods: {
     pushEmpty() {
-      this.$router.push({ name: "frontend" });
+      if (this.$route.name !== "frontend") {
+        this.$router.push({ name: "frontend" });
+      }
+    },
+    pushHistory(currentGroup, currentTest, currentTestData) {
+      this.currentGroup = currentGroup;
+      this.currentTest = currentTest;
+      this.currentTestData = currentTestData;
+    },
+    onDragChange(change) {
+      if (change.removed) {
+        if (change.removed.element.name === this.currentTest) {
+          this.$router.replace({ name: "frontend" });
+        }
+      }
     },
     openNewGroupModal(groupName) {
       this.newGroupName = groupName || "";
@@ -300,31 +325,53 @@ export default {
       this.groupName = this.groups[groupIndex].name;
       this.groupModal = true;
     },
-    openItemModal(groupIndex, itemIndex) {
+    openTestModal(groupIndex, itemIndex) {
       this.groupIndex = groupIndex;
       this.itemIndex = itemIndex;
-      this.itemName = this.groups[groupIndex].items[itemIndex].name;
+      this.itemName = this.groups[groupIndex].tests[itemIndex].name;
       this.itemModal = true;
     },
     appendGroup() {
       if (this.$refs.newGroupForm.validate()) {
         this.groups.push({
           name: this.newGroupName,
+          expand: true,
           editable: true,
           removable: true,
-          items: [],
+          tests: [],
         });
         this.newGroupModal = false;
       }
     },
     changeGroup() {
       if (this.$refs.groupForm.validate()) {
+        const oldGroupName = this.groups[this.groupIndex].name;
         this.groups[this.groupIndex].name = this.groupName;
         this.groupModal = false;
+        if (
+          this.$route.name === "frontend-restore" &&
+          this.$route.params.groupName === oldGroupName
+        ) {
+          this.$router.replace({
+            name: "frontend-restore",
+            params: {
+              groupName: this.groupName,
+              testName: this.$route.params.testName,
+            },
+          });
+        }
       }
     },
     deleteGroup(index) {
+      // TODO: alert user
+      const oldGroupName = this.groups[index].name;
       this.groups.splice(index, 1);
+      if (
+        this.$route.name === "frontend-restore" &&
+        this.$route.params.groupName === oldGroupName
+      ) {
+        this.$router.replace({ name: "frontend" });
+      }
     },
     moveUpGroup(index) {
       if (index !== 0) {
@@ -344,18 +391,54 @@ export default {
         )[0];
       }
     },
-    changeItem() {
+    changeTest() {
       if (this.$refs.itemForm.validate()) {
-        this.groups[this.groupIndex].items[this.itemIndex].name = this.itemName;
+        const oldItemName = this.groups[this.groupIndex].tests[this.itemIndex]
+          .name;
+        this.groups[this.groupIndex].tests[this.itemIndex].name = this.itemName;
         this.itemModal = false;
+        if (
+          this.$route.name === "frontend-restore" &&
+          this.$route.params.testName === oldItemName
+        ) {
+          this.$router.replace({
+            name: "frontend-restore",
+            params: {
+              groupName: this.$route.params.groupName,
+              testName: this.itemName,
+            },
+          });
+        }
       }
     },
-    deleteItem(groupIndex, itemIndex) {
-      const item = this.groups[groupIndex].items.splice(itemIndex, 1);
-      if (this.$route.params.id == item[0].created_at) {
+    deleteTest(groupIndex, itemIndex) {
+      // TODO: alert user
+      const item = this.groups[groupIndex].tests.splice(itemIndex, 1);
+      if (
+        this.$route.name == "frontend-restore" &&
+        this.$route.params.testName == item[0].name
+      ) {
         this.$router.replace({ name: "frontend" });
       }
     },
+  },
+  mounted() {
+    // restore groups from localstorage or use default value.
+    let restoreValue = null;
+    try {
+      restoreValue = JSON.parse(localStorage.getItem("nonebot-groups"));
+    } catch (error) {
+      console.error(`[*]无法从本地存储恢复数据！Error: ${error}`);
+    }
+    this.groups = restoreValue || [
+      {
+        name: "默认分组",
+        expand: true,
+        editable: false,
+        removable: false,
+        tests: [],
+      },
+    ];
   },
 };
 </script>

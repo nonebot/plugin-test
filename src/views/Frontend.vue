@@ -9,12 +9,13 @@
         outlined
         hide-details
       ></v-select> -->
+      <v-breadcrumbs :items="breadcrumbs" large></v-breadcrumbs>
 
       <v-spacer></v-spacer>
 
       <v-btn outlined color="success"
         >Settings
-        <v-icon right>fa-unlock-alt</v-icon>
+        <v-icon small right>fa-unlock-alt</v-icon>
       </v-btn>
     </v-toolbar>
     <v-container>
@@ -38,6 +39,23 @@ import parserJson from "prettier/parser-babel";
 
 export default {
   name: "Home",
+  props: {
+    groupName: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    testName: {
+      type: String,
+      required: false,
+      default: null,
+    },
+    testData: {
+      type: Object,
+      required: false,
+      default: () => {},
+    },
+  },
   data: () => ({
     // adapter: "CoolQ",
     // adapters: ["CoolQ"],
@@ -51,6 +69,37 @@ export default {
     }),
   }),
   computed: {
+    groups() {
+      return [...this.$store.state.groups];
+    },
+    breadcrumbs() {
+      return [
+        {
+          text: this.groupName || "未分类",
+        },
+        {
+          text: this.testName || "未保存测试",
+        },
+      ];
+    },
+    test() {
+      if (this.testData) {
+        return this.testData;
+      }
+      for (let i = 0; i < this.groups.length; i++) {
+        if (this.groups[i].name !== this.groupName) continue;
+        for (let j = 0; j < this.groups[i].tests; j++) {
+          if (this.groups[i].tests[j].name === this.testName) {
+            return this.groups[i].tests[j];
+          }
+        }
+      }
+      const data = {};
+      return data;
+    },
+    data() {
+      return this.test.data;
+    },
     code() {
       return this.highlightJson(this.prettierJson(this.raw_code));
     },
@@ -67,6 +116,7 @@ export default {
       return hljs.highlight("json", code).value;
     },
   },
+  mounted() {},
 };
 </script>
 

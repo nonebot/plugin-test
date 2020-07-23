@@ -17,10 +17,10 @@ const routes = [
     component: Frontend,
   },
   {
-    path: "/frontend/:id",
+    path: "/frontend/:groupName/:testName",
     name: "frontend-restore",
     component: Frontend,
-    props: { data: null },
+    props: true,
   },
   // {
   //   path: "/about",

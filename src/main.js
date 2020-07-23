@@ -1,11 +1,10 @@
 import Vue from "vue";
-import App from "./App.vue";
 
 // vue-router
 import router from "./router";
 
 // vuex
-// import store from "./store";
+import store from "./store";
 
 // axios
 import "./plugins/axios";
@@ -20,6 +19,9 @@ hljs.registerLanguage("json", json);
 // vuetify
 import vuetify from "./plugins/vuetify";
 
+// App
+import App from "./App.vue";
+
 // devtools
 Vue.config.devtools = process.env.NODE_ENV === "development";
 
@@ -27,7 +29,7 @@ Vue.config.productionTip = false;
 
 new Vue({
   router,
-  // store,
+  store,
   vuetify,
   render: (h) => h(App),
 }).$mount("#app");
