@@ -17,7 +17,7 @@ const routes = [
     component: Frontend,
   },
   {
-    path: "/frontend/:groupName/:testName",
+    path: "/frontend/:testId",
     name: "frontend-restore",
     component: Frontend,
     props: true,

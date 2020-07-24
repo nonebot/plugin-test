@@ -6,31 +6,61 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    groups: [],
-    // currentGroup: "未分类",
-    // currentTest: "未命名测试",
-    // currentTestData: {},
+    groups: {},
+    tests: {},
+    groupIndex: [],
   },
   mutations: {
-    updateGroups: (state, payload) => {
-      if (payload) {
-        localStorage.setItem("nonebot-groups", JSON.stringify(payload));
-        state.groups = payload;
+    updateGroup: (state, payload) => {
+      if (payload && payload.id) {
+        state.groups[payload.id] = { ...state.groups[payload.id], ...payload };
+        localStorage.setItem("nonebot-groups", JSON.stringify(state.groups));
       }
     },
-    // changeCurrentTest: (state, payload) => {
-    //   state.currentGroup = payload.currentGroup;
-    //   state.currentTest = payload.currentTest;
-    //   state.currentTestData = payload.currentTestData;
-    // },
+    updateGroups: (state, payload) => {
+      if (payload) {
+        state.groups = payload;
+        localStorage.setItem("nonebot-groups", JSON.stringify(state.groups));
+      }
+    },
+    updateTest: (state, payload) => {
+      if (payload && payload.id) {
+        state.tests[payload.id] = { ...state.tests[payload.id], ...payload };
+        localStorage.setItem("nonebot-tests", JSON.stringify(state.tests));
+      }
+    },
+    updateTests: (state, payload) => {
+      if (payload) {
+        state.tests = payload;
+        localStorage.setItem("nonebot-tests", JSON.stringify(state.tests));
+      }
+    },
+    updateGroupIndex: (state, payload) => {
+      if (payload) {
+        state.groupIndex = payload;
+        localStorage.setItem(
+          "nonebot-groupIndex",
+          JSON.stringify(state.groupIndex)
+        );
+      }
+    },
   },
   actions: {
+    updateGroup: ({ commit }, payload) => {
+      commit("updateGroup", payload);
+    },
     updateGroups: ({ commit }, payload) => {
       commit("updateGroups", payload);
     },
-    // changeCurrentTest: ({ commit }, payload) => {
-    //   commit("changeCurrentTest", payload);
-    // },
+    updateTest: ({ commit }, payload) => {
+      commit("updateTest", payload);
+    },
+    updateTests: ({ commit }, payload) => {
+      commit("updateTests", payload);
+    },
+    updateGroupIndex: ({ commit }, payload) => {
+      commit("updateGroupIndex", payload);
+    },
   },
   modules: {},
 });
