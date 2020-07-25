@@ -3,10 +3,10 @@
     <v-col cols="12" sm="6" class="text-center">
       <v-form ref="form" v-model="valid" lazy-validation>
         <!-- TODO: something in form -->
-        <v-btn :disabled="!valid" color="success" class="mr-4" @click="submit"
+        <v-btn class="mr-4" color="success" :disabled="!valid" @click="submit"
           >发送</v-btn
         >
-        <v-btn color="primary">保存</v-btn>
+        <v-btn v-if="!testId" color="primary" @click="save">保存</v-btn>
       </v-form>
     </v-col>
     <v-col cols="12" sm="6">
@@ -119,6 +119,25 @@ export default {
     },
     submit() {
       //
+    },
+    save() {
+      if (!this.testId) {
+        const id = uuidv1();
+        const defaultGroup = this.$store.state.defaultGroup;
+        this.$store.dispatch("updateTest", {
+          id: id,
+          name: "未命名测试",
+          group: defaultGroup,
+          created_at: new Date().getTime(),
+          data: {},
+        });
+        const tests = this.$store.state.groups[defaultGroup].tests;
+        this.$set(tests, tests.length, id);
+        this.$router.replace({
+          name: "frontend-restore",
+          params: { testId: id },
+        });
+      }
     },
     handleUnload(e) {
       e = e || window.eevnt;

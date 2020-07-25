@@ -12,7 +12,9 @@
     </v-toolbar>
     <v-container>
       <v-row>
-        <v-col cols="12" sm="4"></v-col>
+        <v-col cols="12" sm="4">
+          <Messenger></Messenger>
+        </v-col>
         <v-col cols="12" sm="8">
           <Sender :testId="testId"></Sender>
         </v-col>
@@ -23,11 +25,13 @@
 
 <script>
 import Sender from "@/components/Sender";
+import Messenger from "@/components/Messenger";
 
 export default {
   name: "Home",
   components: {
     Sender,
+    Messenger,
   },
   props: {
     testId: {
@@ -53,7 +57,7 @@ export default {
     },
     test() {
       if (this.testId) {
-        return this.tests[this.testId];
+        return this.tests[this.testId] || {};
       } else {
         return {};
       }
@@ -69,7 +73,11 @@ export default {
       ];
     },
   },
-  methods: {},
+  mounted() {
+    if (this.testId && !this.tests[this.testId]) {
+      this.$router.replace({ name: "frontend" });
+    }
+  },
 };
 </script>
 

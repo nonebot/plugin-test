@@ -95,12 +95,13 @@ export default {
     const id = uuidv1();
     this.$store.dispatch("updateTests", restoreTest || {});
     this.$store.dispatch(
-      "updateGroups",
+      "restoreGroups",
       restoreGroup || {
         [id]: {
           id: id,
           name: "默认分组",
           expand: true,
+          default: true,
           editable: false,
           removable: false,
           tests: [],

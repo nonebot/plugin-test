@@ -9,6 +9,7 @@ export default new Vuex.Store({
     groups: {},
     tests: {},
     groupIndex: [],
+    defaultGroup: "",
   },
   mutations: {
     updateGroup: (state, payload) => {
@@ -21,6 +22,11 @@ export default new Vuex.Store({
       if (payload) {
         state.groups = payload;
         localStorage.setItem("nonebot-groups", JSON.stringify(state.groups));
+      }
+    },
+    updateDefaultGroup: (state, payload) => {
+      if (payload) {
+        state.defaultGroup = payload;
       }
     },
     updateTest: (state, payload) => {
@@ -50,6 +56,14 @@ export default new Vuex.Store({
       commit("updateGroup", payload);
     },
     updateGroups: ({ commit }, payload) => {
+      commit("updateGroups", payload);
+    },
+    restoreGroups: ({ commit }, payload) => {
+      for (let i in payload) {
+        if (payload[i].default === true) {
+          commit("updateDefaultGroup", i);
+        }
+      }
       commit("updateGroups", payload);
     },
     updateTest: ({ commit }, payload) => {

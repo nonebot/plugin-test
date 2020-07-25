@@ -54,6 +54,7 @@
           v-model="groups[groupId].tests"
           group="group"
           draggable=".item"
+          @add="onTestRearrange(groupId, $event)"
         >
           <!-- <transition-group> -->
           <v-subheader
@@ -193,6 +194,7 @@
 </template>
 
 <script>
+import swal from "sweetalert";
 import { v1 as uuidv1 } from "uuid";
 import draggable from "vuedraggable";
 
@@ -269,6 +271,7 @@ export default {
           id: id,
           name: this.newGroupName,
           expand: true,
+          default: false,
           editable: true,
           removable: true,
           tests: [],
@@ -279,26 +282,40 @@ export default {
     },
     changeGroup() {
       if (this.$refs.groupForm.validate()) {
-        this.groups[this.groupId].name = this.groupName;
+        this.$set(this.groups[this.groupId], "name", this.groupName);
         this.groupModal = false;
       }
     },
     deleteGroup(groupIndex) {
-      // TODO: alert user
-      const groupId = this.groupIndex.splice(groupIndex, 1)[0];
-      for (let i = 0; i < this.groups[groupId].tests.length; i++) {
-        const testId = this.groups[groupId].tests[i];
-        if (
-          this.$route.name === "frontend-restore" &&
-          this.$route.params.testId === testId
-        ) {
-          this.$router.replace({ name: "frontend" });
+      swal("确认删除分组？", "该操作将同时删除分组内所有测试用例！", {
+        icon: "warning",
+        buttons: {
+          cancel: "取消",
+          confirm: {
+            text: "确认",
+            value: true,
+          },
+        },
+        dangerMode: true,
+      }).then((value) => {
+        console.log(value);
+        if (value) {
+          const groupId = this.groupIndex.splice(groupIndex, 1)[0];
+          for (let i = 0; i < this.groups[groupId].tests.length; i++) {
+            const testId = this.groups[groupId].tests[i];
+            if (
+              this.$route.name === "frontend-restore" &&
+              this.$route.params.testId === testId
+            ) {
+              this.$router.replace({ name: "frontend" });
+            }
+            console.log(`[i] Delete test ${testId}`);
+            this.$delete(this.tests, testId);
+          }
+          console.log(`[i] Delete group ${groupId}`);
+          this.$delete(this.groups, groupId);
         }
-        console.log(`[i] Delete test ${testId}`);
-        this.$delete(this.tests, testId);
-      }
-      console.log(`[i] Delete group ${groupId}`);
-      this.$delete(this.groups, groupId);
+      });
     },
     moveUpGroup(index) {
       if (index !== 0) {
@@ -320,7 +337,7 @@ export default {
     },
     changeTest() {
       if (this.$refs.itemForm.validate()) {
-        this.tests[this.testId].name = this.testName;
+        this.$set(this.tests[this.testId], "name", this.testName);
         this.testModal = false;
       }
     },
@@ -335,6 +352,11 @@ export default {
       }
       console.log(`[i] Delete test ${testId}`);
       this.$delete(this.tests, testId);
+    },
+    onTestRearrange(groupId, event) {
+      const testId = this.groups[groupId].tests[event.newDraggableIndex];
+      console.log(`[i] Arrange test ${testId} to group ${groupId}`);
+      this.$set(this.tests[testId], "group", groupId);
     },
   },
   mounted() {
