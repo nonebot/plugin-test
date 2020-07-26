@@ -17,6 +17,7 @@
 
 <script>
 import Vue from "vue";
+import templates from "./templates";
 import { v1 as uuidv1 } from "uuid";
 import hljs from "highlight.js/lib/core";
 import prettier from "prettier/standalone";
