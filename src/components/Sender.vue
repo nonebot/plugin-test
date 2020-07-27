@@ -1,7 +1,20 @@
 <template>
-  <v-row>
+  <v-row no-gutters>
     <v-col cols="12" sm="6" class="text-center">
       <v-form ref="form" v-model="valid" lazy-validation>
+        <v-row>
+          <v-col cols="6">
+            <v-select
+              outlined
+              dense
+              v-model="adapter"
+              :items="adapters"
+            ></v-select>
+          </v-col>
+          <v-col cols="6">
+            <v-select outlined dense v-model="event" :items="events"></v-select>
+          </v-col>
+        </v-row>
         <!-- TODO: something in form -->
         <v-btn class="mr-4" color="success" :disabled="!valid" @click="submit"
           >发送</v-btn
@@ -17,6 +30,7 @@
 
 <script>
 import Vue from "vue";
+import object from "lodash/object";
 import templates from "./templates";
 import { v1 as uuidv1 } from "uuid";
 import hljs from "highlight.js/lib/core";
@@ -24,7 +38,7 @@ import prettier from "prettier/standalone";
 import parserJson from "prettier/parser-babel";
 
 export default {
-  name: "Home",
+  name: "Sender",
   props: {
     testId: {
       type: String,
@@ -37,6 +51,10 @@ export default {
     },
   },
   data: () => ({
+    templates: templates,
+
+    test: {},
+
     valid: true,
     changed: false,
   }),
@@ -44,46 +62,68 @@ export default {
     tests() {
       return this.$store.state.tests;
     },
-    test: {
+    data: {
       get() {
         if (this.testId) {
-          return this.tests[this.testId];
+          return this.test.data;
+        } else if (this.adapter && this.event) {
+          return this.templates[this.adapter][this.event].data;
         } else {
-          return {
-            id: uuidv1(),
-            name: "未保存测试",
-            group: null,
-            created_at: new Date().getTime(),
-            data: {},
-          };
+          return {};
         }
       },
       set(value) {
-        if (this.testId) {
+        this.changed = true;
+        this.$set(this.test, "data", value);
+      },
+    },
+    code() {
+      if (this.adapter && this.event) {
+        return this.templates[this.adapter][this.event].template;
+      } else {
+        return "";
+      }
+    },
+    adapters() {
+      return object.keys(this.templates);
+    },
+    events() {
+      if (this.adapter) {
+        return object.values(this.templates[this.adapter]);
+      } else {
+        return [];
+      }
+    },
+    adapter: {
+      get() {
+        return this.test.adapter;
+      },
+      set(value) {
+        this.changed = true;
+        this.$set(this.test, "adapter", value);
+      },
+    },
+    event: {
+      get() {
+        return this.test.event;
+      },
+      set(value) {
+        this.changed = true;
+        this.$set(this.test, "event", value);
+      },
+    },
+  },
+  watch: {
+    test: {
+      deep: true,
+      handler(value) {
+        if (this.testId && this.changed) {
           console.log("[i] Update test");
           this.$store.dispatch("updateTest", value);
-        } else {
-          this.changed = true;
         }
       },
     },
-    data() {
-      return this.test.data;
-    },
-    code() {
-      return this.highlightJson(
-        this.prettierJson(
-          JSON.stringify({
-            message: "123",
-            raw_message: "123",
-            sender: {
-              name: "xxx",
-              qq: 1234,
-            },
-          })
-        )
-      );
-    },
+    $route: "restoreTest",
   },
   methods: {
     renderJson(Json, data, target) {
@@ -123,21 +163,28 @@ export default {
     },
     save() {
       if (!this.testId) {
-        const id = uuidv1();
-        const defaultGroup = this.$store.state.defaultGroup;
-        this.$store.dispatch("updateTest", {
-          id: id,
-          name: "未命名测试",
-          group: defaultGroup,
-          created_at: new Date().getTime(),
-          data: {},
-        });
-        const tests = this.$store.state.groups[defaultGroup].tests;
-        this.$set(tests, tests.length, id);
+        this.$store.dispatch("updateTest", this.test);
+        const tests = this.$store.state.groups[this.test.group].tests;
+        this.$set(tests, tests.length, this.test.id);
         this.$router.replace({
           name: "frontend-restore",
-          params: { testId: id },
+          params: { testId: this.test.id },
         });
+      }
+    },
+    restoreTest() {
+      if (this.testId) {
+        this.test = this.tests[this.testId];
+      } else {
+        this.test = {
+          id: uuidv1(),
+          name: "未保存测试",
+          group: this.$store.state.defaultGroup,
+          created_at: new Date().getTime(),
+          adapter: "",
+          event: "",
+          data: {},
+        };
       }
     },
     handleUnload(e) {
@@ -145,13 +192,17 @@ export default {
       if (e) {
         e.returnValue = "当前页面数据未保存，确定要离开？";
       }
-      return "当前页面数据未保存，确定要离开？";
+      if (this.changed && !this.testId) {
+        return "当前页面数据未保存，确定要离开？";
+      }
     },
   },
   created() {
     window.addEventListener("onbeforeunload", (e) => this.handleUnload(e));
   },
-  mounted() {},
+  mounted() {
+    this.restoreTest();
+  },
   destroyed() {
     window.removeEventListener("onbeforeunload", (e) => this.handleUnload(e));
   },

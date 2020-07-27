@@ -100,7 +100,7 @@
 // import { WOW } from "wowjs";
 
 export default {
-  name: "chat-interface",
+  name: "Messenger",
   methods: {
     // initWOW: function () {
     //   var wow = new WOW({
