@@ -35,22 +35,18 @@ const templates = {
         user_id: null,
         font: null,
       },
-      template: `
-      {
-        "post_type": "message",
-        "message_type": "private",
-        "sub_type": "{{ sub_type }}",
-        "message_id": 10000,
-        "user_id": {{ user_id }},
-        "message": "{{ message }}",
-        "raw_message": "{{ message }}",
-        "font": {{ font }},
-        "sender": {{
-          senders.user_id
-          ？ senders.user_id
-          : JSON.stringify({ user_id: user_id })
-        }}
-      }`,
+      template: {
+        post_type: "message",
+        message_type: "private",
+        sub_type: "{{ sub_type }}",
+        message_id: 10000,
+        user_id: "{{ user_id }}",
+        message: "{{ message }}",
+        raw_message: "{{ message }}",
+        font: "{{ font }}",
+        sender:
+          "{{ senders.user_id ? senders.user_id : { user_id: user_id } }}",
+      },
     },
     message_group: {
       text: "群消息",

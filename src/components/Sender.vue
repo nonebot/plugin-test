@@ -1,8 +1,8 @@
 <template>
-  <v-row no-gutters>
+  <v-row dense>
     <v-col cols="12" sm="6" class="text-center">
       <v-form ref="form" v-model="valid" lazy-validation>
-        <v-row>
+        <v-row dense>
           <v-col cols="6">
             <v-select
               outlined
@@ -23,22 +23,24 @@
       </v-form>
     </v-col>
     <v-col cols="12" sm="6">
-      <div id="code"></div>
+      <CodeTemplate :json="json"></CodeTemplate>
     </v-col>
   </v-row>
 </template>
 
 <script>
 import Vue from "vue";
+import ST from "stjs/st";
 import object from "lodash/object";
 import templates from "./templates";
 import { v1 as uuidv1 } from "uuid";
-import hljs from "highlight.js/lib/core";
-import prettier from "prettier/standalone";
-import parserJson from "prettier/parser-babel";
+import CodeTemplate from "./CodeTemplate";
 
 export default {
   name: "Sender",
+  components: {
+    CodeTemplate,
+  },
   props: {
     testId: {
       type: String,
@@ -67,7 +69,9 @@ export default {
         if (this.testId) {
           return this.test.data;
         } else if (this.adapter && this.event) {
-          return this.templates[this.adapter][this.event].data;
+          const data = this.templates[this.adapter][this.event].data;
+          this.$set(this.test, "data", data);
+          return data;
         } else {
           return {};
         }
@@ -81,8 +85,13 @@ export default {
       if (this.adapter && this.event) {
         return this.templates[this.adapter][this.event].template;
       } else {
-        return "";
+        return {};
       }
+    },
+    json() {
+      return ST.select({ ...this.env, ...this.data })
+        .transformWith(this.code)
+        .root();
     },
     adapters() {
       return object.keys(this.templates);
@@ -126,43 +135,12 @@ export default {
     $route: "restoreTest",
   },
   methods: {
-    renderJson(Json, data, target) {
-      var Component = Vue.extend({
-        template: `
-        <pre style="display: block; padding: 0.5em; background: #1d1f21; color: #c5c8c6;">
-          <code
-            ref="code"
-            class="json hljs"
-            style="font-familly: Consolas,monaco,monospace; background: #1d1f21; color: #c5c8c6;"
-          >${template}</code>
-        </pre>`,
-        data: () => data,
-        methods: {
-          prettierJson(code) {
-            return prettier.format(code, {
-              printWidth: 36,
-              parser: "json",
-              plugins: [parserJson],
-            });
-          },
-          highlightJson(code) {
-            return hljs.highlight("json", code).value;
-          },
-        },
-        mounted() {
-          var node = this.$refs.code;
-          node.innerHTML = this.highlightJson(
-            this.prettierJson(node.innerHTML)
-          );
-        },
-      });
-      new Component().$mount(target);
-    },
     submit() {
       //
     },
     save() {
       if (!this.testId) {
+        this.$set(this.test, "name", "未命名测试");
         this.$store.dispatch("updateTest", this.test);
         const tests = this.$store.state.groups[this.test.group].tests;
         this.$set(tests, tests.length, this.test.id);

@@ -298,7 +298,6 @@ export default {
         },
         dangerMode: true,
       }).then((value) => {
-        console.log(value);
         if (value) {
           const groupId = this.groupIndex.splice(groupIndex, 1)[0];
           for (let i = 0; i < this.groups[groupId].tests.length; i++) {
@@ -342,16 +341,29 @@ export default {
       }
     },
     deleteTest(groupId, testIndex) {
-      // TODO: alert user
-      const testId = this.groups[groupId].tests.splice(testIndex, 1);
-      if (
-        this.$route.name == "frontend-restore" &&
-        this.$route.params.testId == testId
-      ) {
-        this.$router.replace({ name: "frontend" });
-      }
-      console.log(`[i] Delete test ${testId}`);
-      this.$delete(this.tests, testId);
+      swal("确认删除测试？", "该操作将永久删除该测试用例！", {
+        icon: "warning",
+        buttons: {
+          cancel: "取消",
+          confirm: {
+            text: "确认",
+            value: true,
+          },
+        },
+        dangerMode: true,
+      }).then((value) => {
+        if (value) {
+          const testId = this.groups[groupId].tests.splice(testIndex, 1);
+          if (
+            this.$route.name == "frontend-restore" &&
+            this.$route.params.testId == testId
+          ) {
+            this.$router.replace({ name: "frontend" });
+          }
+          console.log(`[i] Delete test ${testId}`);
+          this.$delete(this.tests, testId);
+        }
+      });
     },
     onTestRearrange(groupId, event) {
       const testId = this.groups[groupId].tests[event.newDraggableIndex];

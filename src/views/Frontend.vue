@@ -11,12 +11,12 @@
       </v-btn>
     </v-toolbar>
     <v-container>
-      <v-row>
+      <v-row dense>
         <v-col cols="12" sm="4">
           <Messenger></Messenger>
         </v-col>
         <v-col cols="12" sm="8">
-          <Sender :testId="testId"></Sender>
+          <Sender :testId="testId" :env="env"></Sender>
         </v-col>
       </v-row>
     </v-container>
@@ -40,7 +40,11 @@ export default {
       default: "",
     },
   },
-  data: () => ({}),
+  data: () => ({
+    env: {
+      senders: [],
+    },
+  }),
   computed: {
     groups() {
       return this.$store.state.groups;
