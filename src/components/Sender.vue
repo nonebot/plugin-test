@@ -16,6 +16,38 @@
           </v-col>
         </v-row>
         <!-- TODO: something in form -->
+        <template v-for="(field, index) in fields">
+          <v-text-field
+            :key="index"
+            v-if="field.type == 'input'"
+            v-model="data[field.model]"
+            outlined
+            dense
+            :type="field.subType"
+            :label="field.label"
+            :rules="field.rules"
+          ></v-text-field>
+          <v-textarea
+            :key="index"
+            v-else-if="field.type == 'textarea'"
+            v-model="data[field.model]"
+            outlined
+            dense
+            :rows="2"
+            :label="field.label"
+            :rules="field.rules"
+          ></v-textarea>
+          <v-select
+            :key="index"
+            v-else-if="field.type == 'select'"
+            v-model="data[field.model]"
+            outlined
+            dense
+            :items="field.options"
+            :label="field.label"
+            :rules="field.rules"
+          ></v-select>
+        </template>
         <v-btn class="mr-4" color="success" :disabled="!valid" @click="submit"
           >发送</v-btn
         >
@@ -63,6 +95,13 @@ export default {
   computed: {
     tests() {
       return this.$store.state.tests;
+    },
+    fields() {
+      if (this.adapter && this.event) {
+        return this.templates[this.adapter][this.event].fields;
+      } else {
+        return [];
+      }
     },
     data: {
       get() {

@@ -18,21 +18,9 @@
     <v-app-bar app color="white" flat>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <!-- <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="@/assets/logo.png"
-          transition="scale-transition"
-          width="40"
-        />
-        <v-toolbar-title class="hidden-sm-and-down">NoneBot</v-toolbar-title>
-      </div>-->
-
       <v-spacer></v-spacer>
 
-      <v-btn href="https://nonebot.cqp.moe/" target="_blank" text>
+      <v-btn href="https://docs.nonebot.dev/" target="_blank" text>
         <span class="mr-2">NoneBot</span>
         <v-icon small>fa-external-link-alt</v-icon>
       </v-btn>

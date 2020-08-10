@@ -1,7 +1,7 @@
 const required = (v) => !!v || "该项必填";
 
 const templates = {
-  CoolQ: {
+  CQHTTP: {
     message_private: {
       text: "私聊消息",
       value: "message_private",
@@ -9,24 +9,28 @@ const templates = {
         {
           type: "select",
           label: "sub_type",
+          model: "sub_type",
           options: ["friend", "group", "discuss", "other"],
           rules: [required],
         },
         {
           type: "textarea",
           label: "message",
+          model: "message",
           rules: [required],
         },
         {
           type: "input",
           subType: "number",
           label: "user_id",
+          model: "user_id",
           rules: [required],
         },
         {
           type: "input",
           subType: "number",
           label: "font",
+          model: "font",
         },
       ],
       data: {
@@ -45,7 +49,7 @@ const templates = {
         raw_message: "{{ message }}",
         font: "{{ font }}",
         sender:
-          "{{ senders.user_id ? senders.user_id : { user_id: user_id } }}",
+          "{{ senders[user_id] ? senders[user_id] : { user_id: -1, nickname: '请在设置中填写信息' } }}",
       },
     },
     message_group: {

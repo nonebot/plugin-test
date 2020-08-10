@@ -35,7 +35,14 @@
             <v-text-field dense solo hide-details height="28px"></v-text-field>
           </v-col>
           <v-col cols="auto">
-            <v-btn color="primary" small rounded depressed>发送</v-btn>
+            <v-btn
+              style="font-size: 0.8rem;"
+              color="primary"
+              small
+              rounded
+              depressed
+              >发送</v-btn
+            >
           </v-col>
         </v-row>
         <v-row class="text-center" no-gutters>
@@ -60,39 +67,6 @@
         </v-row>
       </v-container>
     </v-card>
-    <!-- <div class="portlet-box portlet-fullHeight portlet-shadow mb-30">
-      <div class="portlet-body chat-bg px-2">
-        <template v-for="(item, index) in messages">
-          <div
-            v-if="item.position == 'right'"
-            class="flex d-flex flex-row justify-content-end message wow fadeInRight"
-            :key="index"
-          >
-            <div
-              class="message-box"
-              v-html="item.msg.replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;')"
-            ></div>
-            <div
-              class="avatar rounded-circle"
-              style="background-color: #1565c0;"
-            >
-              <i class="fas fa-user"></i>
-            </div>
-          </div>
-          <div
-            v-else
-            class="flex d-flex flex-row message wow fadeInLeft"
-            :key="index"
-          >
-            <div
-              class="message-box"
-              v-html="item.msg.replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;')"
-            ></div>
-            <img src="@/assets/logo.png" class="avatar rounded-circle" />
-          </div>
-        </template>
-      </div>
-    </div> -->
   </div>
 </template>
 
