@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="frontend">
     <v-toolbar color="transparent" flat>
       <v-breadcrumbs :items="breadcrumbs" large></v-breadcrumbs>
 
@@ -28,7 +28,7 @@ import Sender from "@/components/Sender";
 import Messenger from "@/components/Messenger";
 
 export default {
-  name: "Home",
+  name: "Frontend",
   components: {
     Sender,
     Messenger,

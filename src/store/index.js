@@ -10,6 +10,7 @@ export default new Vuex.Store({
     tests: {},
     groupIndex: [],
     defaultGroup: "",
+    messages: [],
   },
   mutations: {
     updateGroup: (state, payload) => {
@@ -50,6 +51,16 @@ export default new Vuex.Store({
         );
       }
     },
+    appendMessage: (state, payload) => {
+      if (payload) {
+        state.messages.push(payload);
+      }
+    },
+    appendMessages: (state, payload) => {
+      if (payload) {
+        state.messages.concat(payload);
+      }
+    },
   },
   actions: {
     updateGroup: ({ commit }, payload) => {
@@ -74,6 +85,12 @@ export default new Vuex.Store({
     },
     updateGroupIndex: ({ commit }, payload) => {
       commit("updateGroupIndex", payload);
+    },
+    appendMessage: ({ commit }, payload) => {
+      commit("appendMessage", payload);
+    },
+    appendMessages: ({ commit }, payload) => {
+      commit("appendMessages", payload);
     },
   },
   modules: {},

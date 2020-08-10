@@ -16,6 +16,7 @@
           </v-col>
         </v-row>
         <!-- TODO: something in form -->
+        <!-- * input, textarea, select -->
         <template v-for="(field, index) in fields">
           <v-text-field
             :key="index"

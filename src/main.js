@@ -7,7 +7,7 @@ import router from "./router";
 import store from "./store";
 
 // axios
-import "./plugins/axios";
+// import "./plugins/axios";
 
 // highlight.js
 import hljs from "highlight.js/lib/core";
