@@ -16,7 +16,7 @@
           </v-col>
         </v-row>
         <!-- TODO: something in form -->
-        <!-- * input, textarea, select -->
+        <!-- * input, textarea, select, switch -->
         <template v-for="(field, index) in fields">
           <v-text-field
             :key="index"
@@ -48,6 +48,12 @@
             :label="field.label"
             :rules="field.rules"
           ></v-select>
+          <v-switch
+            :key="index"
+            v-else-if="field.type == 'switch'"
+            v-model="data[field.model]"
+            :label="field.label"
+          ></v-switch>
         </template>
         <v-btn class="mr-4" color="success" :disabled="!valid" @click="submit"
           >发送</v-btn

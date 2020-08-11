@@ -5,8 +5,8 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn outlined color="success"
-        >Settings
+      <v-btn outlined color="success">
+        Settings
         <v-icon small right>fa-unlock-alt</v-icon>
       </v-btn>
     </v-toolbar>
