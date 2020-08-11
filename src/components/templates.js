@@ -40,6 +40,8 @@ const templates = {
         font: null,
       },
       template: {
+        self_id: "{{ self_id }}",
+        time: "{{ current_time }}",
         post_type: "message",
         message_type: "private",
         sub_type: "{{ sub_type }}",

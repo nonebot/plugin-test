@@ -129,7 +129,11 @@ export default {
       }
     },
     json() {
-      return ST.select({ ...this.env, ...this.data })
+      return ST.select({
+        ...this.env,
+        ...this.data,
+        current_time: Math.floor(new Date().getTime() / 1000),
+      })
         .transformWith(this.code)
         .root();
     },

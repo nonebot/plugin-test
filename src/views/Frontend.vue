@@ -42,6 +42,7 @@ export default {
   },
   data: () => ({
     env: {
+      self_id: 123,
       senders: [],
     },
   }),
