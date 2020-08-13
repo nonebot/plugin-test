@@ -5,12 +5,16 @@ description = "Test frontend for nonebot v2+"
 authors = ["yanyongyu <yanyongyu_1@126.com>"]
 license = "MIT"
 readme = "README.md"
-homepage = "https://nonebot.cqp.moe/"
+homepage = "https://docs.nonebot.dev/"
 repository = "https://github.com/nonebot/nonebot-test"
 keywords = ["nonebot", "qq", "qqbot", "mirai", "coolq"]
+packages = [
+    { include = "nonebot_test" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.7"
+aiofiles = "^0.5.0"
 
 [tool.poetry.dev-dependencies]
 yapf = "^0.30.0"

@@ -582,7 +582,7 @@ const templates = {
       },
     },
   },
-  Mirai: {},
+  // Mirai: {},
 };
 
 export default templates;
