@@ -15,4 +15,4 @@ def register_route(driver: Driver, socketio):
     app.mount("/test",
               StaticFiles(directory=static_path, html=True),
               name="test")
-    app.mount("/test/", socketio, name="socketio")
+    app.mount("/test_ws/", socketio, name="socketio")

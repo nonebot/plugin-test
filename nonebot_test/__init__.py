@@ -14,14 +14,13 @@ from nonebot_test.view import handle_ws_reverse
 from nonebot_test.exception import UnAuthorized, UnknowAdapter, BadRequest
 
 sio = socketio.AsyncServer(async_mode="asgi")
-socket_app = socketio.ASGIApp(sio, socketio_path="ws")
+socket_app = socketio.ASGIApp(sio, socketio_path="socket")
 
 
 def init():
     driver = get_driver()
     try:
-        _module = importlib.import_module(
-            f"nonebot_test.drivers.{driver.type}")
+        _module = importlib.import_module(f"nonebot_test.drivers.{driver.type}")
     except ImportError:
         raise RuntimeError(f"Driver {driver.type} not supported")
     register_route = getattr(_module, "register_route")
@@ -31,6 +30,7 @@ def init():
 
 
 class WebSocket(BaseWebSocket):
+
     def __init__(self, sio: socketio.AsyncServer, adapter, data):
         self.adapter = adapter
         self.data = data
@@ -59,7 +59,8 @@ class WebSocket(BaseWebSocket):
 async def connect(sid, environ):
     logger.info(f"Test Client {sid} Connected via websocket!")
     # TODO: Save self_id and access_token
-    sio.save_session(sid, {"environ": environ})
+    print(environ)
+    await sio.save_session(sid, {"environ": environ})
 
 
 @sio.event
