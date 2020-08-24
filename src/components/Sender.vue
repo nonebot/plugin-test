@@ -112,7 +112,7 @@ export default {
     },
     data: {
       get() {
-        if (this.testId) {
+        if (this.testId && this.adapter && this.event) {
           return this.test.data;
         } else if (this.adapter && this.event) {
           const data = this.templates[this.adapter][this.event].data;
@@ -160,6 +160,8 @@ export default {
       set(value) {
         this.changed = true;
         this.$set(this.test, "adapter", value);
+        this.$set(this.test, "event", "");
+        this.$set(this.test, "data", {});
       },
     },
     event: {
@@ -169,6 +171,7 @@ export default {
       set(value) {
         this.changed = true;
         this.$set(this.test, "event", value);
+        this.$set(this.test, "data", this.templates[this.adapter][value].data);
       },
     },
   },
@@ -186,7 +189,10 @@ export default {
   },
   methods: {
     submit() {
-      //
+      if (this.$refs.form.validate()) {
+        console.log(this.adapter, this.json);
+        this.$socket.emit("event", [this.adapter.toLowerCase(), this.json]);
+      }
     },
     save() {
       if (!this.testId) {

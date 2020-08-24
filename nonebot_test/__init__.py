@@ -3,15 +3,16 @@
 
 import json
 import importlib
+from asyncio import Queue
 
 import socketio
 from nonebot import get_driver
 from nonebot.log import logger
 from nonebot.drivers import BaseWebSocket
 from nonebot.utils import DataclassEncoder
+from socketio.exceptions import ConnectionRefusedError
 
 from nonebot_test.view import handle_ws_reverse
-from nonebot_test.exception import UnAuthorized, UnknowAdapter, BadRequest
 
 sio = socketio.AsyncServer(async_mode="asgi")
 socket_app = socketio.ASGIApp(sio, socketio_path="socket")
@@ -20,7 +21,8 @@ socket_app = socketio.ASGIApp(sio, socketio_path="socket")
 def init():
     driver = get_driver()
     try:
-        _module = importlib.import_module(f"nonebot_test.drivers.{driver.type}")
+        _module = importlib.import_module(
+            f"nonebot_test.drivers.{driver.type}")
     except ImportError:
         raise RuntimeError(f"Driver {driver.type} not supported")
     register_route = getattr(_module, "register_route")
@@ -30,15 +32,12 @@ def init():
 
 
 class WebSocket(BaseWebSocket):
-
-    def __init__(self, sio: socketio.AsyncServer, adapter, data):
-        self.adapter = adapter
-        self.data = data
+    def __init__(self, sio: socketio.AsyncServer):
+        self.clients = {}
         super().__init__(sio)
 
-    @property
-    def closed(self) -> bool:
-        return True
+    def closed(self, self_id) -> bool:
+        return not bool(self.clients.get(self_id))
 
     async def accept(self):
         raise NotImplementedError
@@ -46,8 +45,11 @@ class WebSocket(BaseWebSocket):
     async def close(self):
         raise NotImplementedError
 
-    async def receive(self) -> dict:
-        return self.data
+    async def receive(self, self_id) -> list:
+        return await self.clients[self_id].get()
+
+    async def put(self, self_id, data: list):
+        await self.clients[self_id].put(data)
 
     async def send(self, data: dict):
         text = json.dumps(data, cls=DataclassEncoder)
@@ -55,36 +57,40 @@ class WebSocket(BaseWebSocket):
         await self.websocket.emit("api", [self.adapter, data])
 
 
+websocket = WebSocket(sio)
+
+
 @sio.event
 async def connect(sid, environ):
-    logger.info(f"Test Client {sid} Connected via websocket!")
-    # TODO: Save self_id and access_token
-    print(environ)
-    await sio.save_session(sid, {"environ": environ})
+    driver = get_driver()
+    self_id = environ.get("HTTP_X_SELF_ID")
+    access_token = environ.get("HTTP_AUTHORIZATION")
+
+    secret = driver.config.secret
+    if secret is not None and secret != access_token:
+        logger.error(f"Test Client {self_id} from {sid} auth check failed!")
+        raise ConnectionRefusedError("Authorization Failed")
+
+    if not self_id or self_id in websocket.clients:
+        logger.error(
+            f"Test Client {self_id} from {sid} conflict from annother!")
+        raise ConnectionRefusedError("Conflict Connection")
+
+    logger.info(f"Test Client {self_id} from {sid} Connected!")
+    await sio.save_session(sid, {"self_id": self_id})
+    websocket.clients[self_id] = Queue()
+    sio.start_background_task(handle_ws_reverse, websocket, self_id)
 
 
 @sio.event
 async def disconnect(sid):
-    logger.info(f"Test Client {sid} DisConnected!")
+    session = await sio.get_session(sid)
+    await websocket.put(session["self_id"], ["websocket.close", {}])
+    del websocket.clients[session["self_id"]]
+    logger.info(f"Test Client {session['self_id']} from {sid} DisConnected!")
 
 
 @sio.on("event")
 async def handle_event(sid, data):
-    try:
-        adapter = data[0]
-        data = data[1]
-        websocket = WebSocket(sio, adapter, data)
-        # TODO
-        self_id = ""
-        access_token = None
-        await handle_ws_reverse(adapter, websocket, self_id, access_token)
-    except UnAuthorized:
-        await sio.emit("exception", {"message": "Wrong access token"})
-    except UnknowAdapter:
-        await sio.emit("exception", {"message": "Unknow Adapter"})
-    except BadRequest:
-        await sio.emit(
-            "exception",
-            {"message": "Bad Request. May be caused by incorrect self_id"})
-    except Exception as e:
-        logger.error(e)
+    session = await sio.get_session(sid)
+    await websocket.put(session["self_id"], data)

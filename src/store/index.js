@@ -1,6 +1,5 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import { padStart } from "lodash";
 
 Vue.use(Vuex);
 
@@ -11,6 +10,8 @@ export default new Vuex.Store({
     groupIndex: [],
     defaultGroup: "",
     messages: [],
+
+    envs: {},
   },
   mutations: {
     updateGroup: (state, payload) => {
@@ -61,6 +62,12 @@ export default new Vuex.Store({
         state.messages.concat(payload);
       }
     },
+    updateEnv: (state, payload) => {
+      if (payload) {
+        state.envs = payload;
+        localStorage.setItem("nonebot-envs", JSON.stringify(state.envs));
+      }
+    },
   },
   actions: {
     updateGroup: ({ commit }, payload) => {
@@ -91,6 +98,9 @@ export default new Vuex.Store({
     },
     appendMessages: ({ commit }, payload) => {
       commit("appendMessages", payload);
+    },
+    updateEnv: ({ commit }, payload) => {
+      commit("updateEnv", payload);
     },
   },
   modules: {},

@@ -1,41 +1,41 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from typing import Optional
-
+from nonebot.log import logger
 from nonebot import get_driver
 from nonebot.typing import WebSocket
 
-from nonebot_test.exception import UnAuthorized, UnknowAdapter, BadRequest
 
-
-async def handle_ws_reverse(adapter: str, websocket: WebSocket, self_id: str,
-                            access_token: Optional[str]):
+async def handle_ws_reverse(websocket: WebSocket, self_id: str):
     driver = get_driver()
 
-    secret = driver.config.secret
-    if secret is not None and secret != access_token:
-        raise UnAuthorized
+    while not websocket.closed(self_id):
+        data = await websocket.receive(self_id)
 
-    if not self_id or self_id in driver._clients:
-        raise BadRequest
+        adapter = data[0]
+        data = data[1]
 
-    if adapter in driver._adapters:
-        BotClass = driver._adapters[adapter]
-        bot = BotClass(driver,
-                       "websocket",
-                       driver.config,
-                       self_id,
-                       websocket=websocket)
-    else:
-        raise UnknowAdapter
+        if adapter == "websocket.close":
+            continue
 
-    driver._clients[self_id] = bot
+        if adapter in driver._adapters:
+            BotClass = driver._adapters[adapter]
+            bot = BotClass(driver,
+                           "websocket",
+                           driver.config,
+                           self_id,
+                           websocket=websocket)
+        else:
+            await websocket.websocket.emit("exception",
+                                           {"message": "Unknown Adapter"})
+            continue
 
-    try:
-        data = await websocket.receive()
+        driver._clients[self_id] = bot
 
-        if data:
+        try:
             await bot.handle_message(data)
-    finally:
-        del driver._clients[self_id]
+        except Exception as e:
+            logger.error(e)
+        finally:
+            del driver._clients[self_id]
+            websocket.clients[self_id].task_done()

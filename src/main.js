@@ -9,6 +9,14 @@ import store from "./store";
 // axios
 // import "./plugins/axios";
 
+// vue-socket.io
+import io from "./plugins/socketio";
+io(store);
+
+// toastr
+import toastr from "./plugins/toastr";
+Vue.use(toastr);
+
 // highlight.js
 import hljs from "highlight.js/lib/core";
 import json from "highlight.js/lib/languages/json";

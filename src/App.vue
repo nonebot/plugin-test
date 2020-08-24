@@ -66,6 +66,19 @@ export default {
   data: () => ({
     drawer: true,
   }),
+  sockets: {
+    connect() {
+      console.log("Test Server Connected!");
+      this.$toastr.success("", "WebSocket Connected!");
+    },
+    connect_error(error) {
+      console.log(`Test Server Connect Failed: ${error}`);
+      this.$toastr.error(
+        "",
+        (error && error.message) || "WebSocket Connection Error"
+      );
+    },
+  },
   created() {
     // restore groups from localstorage or use default value.
     let restoreGroup = null;
