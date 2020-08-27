@@ -27,8 +27,12 @@ def init():
         raise RuntimeError(f"Driver {driver.type} not supported")
     register_route = getattr(_module, "register_route")
     register_route(driver, socket_app)
-    logger.info(f"Nonebot test frontend will be running at: "
-                f"http://{driver.config.host}:{driver.config.port}/test/")
+    host = str(driver.config.host)
+    port = driver.config.port
+    if host in ["0.0.0.0", "127.0.0.1"]:
+        host = "localhost"
+    logger.opt(colors=True).info(f"Nonebot test frontend will be running at: "
+                                 f"<b><u>http://{host}:{port}/test/</u></b>")
 
 
 class WebSocket(BaseWebSocket):
