@@ -8,11 +8,9 @@ from asyncio import Queue
 import socketio
 from nonebot import get_driver
 from nonebot.log import logger
-from nonebot.drivers import BaseWebSocket
-from nonebot.utils import DataclassEncoder
 from socketio.exceptions import ConnectionRefusedError
 
-from nonebot_test.view import handle_ws_reverse
+from nonebot_test.view import WebSocket, handle_ws_reverse
 
 sio = socketio.AsyncServer(async_mode="asgi")
 socket_app = socketio.ASGIApp(sio, socketio_path="socket")
@@ -33,32 +31,6 @@ def init():
         host = "localhost"
     logger.opt(colors=True).info(f"Nonebot test frontend will be running at: "
                                  f"<b><u>http://{host}:{port}/test/</u></b>")
-
-
-class WebSocket(BaseWebSocket):
-    def __init__(self, sio: socketio.AsyncServer):
-        self.clients = {}
-        super().__init__(sio)
-
-    def closed(self, self_id) -> bool:
-        return not bool(self.clients.get(self_id))
-
-    async def accept(self):
-        raise NotImplementedError
-
-    async def close(self):
-        raise NotImplementedError
-
-    async def receive(self, self_id) -> list:
-        return await self.clients[self_id].get()
-
-    async def put(self, self_id, data: list):
-        await self.clients[self_id].put(data)
-
-    async def send(self, data: dict):
-        text = json.dumps(data, cls=DataclassEncoder)
-        data = json.loads(text)
-        await self.websocket.emit("api", [self.adapter, data])
 
 
 websocket = WebSocket(sio)
