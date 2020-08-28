@@ -16,7 +16,7 @@
           <Messenger></Messenger>
         </v-col>
         <v-col cols="12" sm="8">
-          <Sender :testId="testId" :env="env"></Sender>
+          <Sender :testId="testId"></Sender>
         </v-col>
       </v-row>
     </v-container>
@@ -40,13 +40,17 @@ export default {
       default: "",
     },
   },
-  data: () => ({
-    env: {
-      self_id: 123,
-      senders: [],
-    },
-  }),
+  data: () => ({}),
   computed: {
+    env: {
+      get() {
+        return this.$store.state.env;
+      },
+      set(value) {
+        console.log("[i] Update env");
+        this.$store.dispatch("updateEnv", value);
+      },
+    },
     groups() {
       return this.$store.state.groups;
     },

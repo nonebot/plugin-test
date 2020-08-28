@@ -85,11 +85,6 @@ export default {
       type: String,
       required: true,
     },
-    env: {
-      type: Object,
-      required: false,
-      default: () => ({}),
-    },
   },
   data: () => ({
     templates: templates,
@@ -100,6 +95,9 @@ export default {
     changed: false,
   }),
   computed: {
+    env() {
+      return this.$store.state.env;
+    },
     tests() {
       return this.$store.state.tests;
     },

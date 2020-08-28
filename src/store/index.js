@@ -11,7 +11,10 @@ export default new Vuex.Store({
     defaultGroup: "",
     messages: [],
 
-    envs: {},
+    envs: {
+      self_id: "",
+      senders: [],
+    },
   },
   mutations: {
     updateGroup: (state, payload) => {
