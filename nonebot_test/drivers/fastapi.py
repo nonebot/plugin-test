@@ -6,11 +6,15 @@ from pathlib import Path
 from nonebot.drivers.fastapi import Driver
 from fastapi.staticfiles import StaticFiles
 
+from nonebot_test.view import handle_getting_plugins
+
 
 def register_route(driver: Driver, socketio):
     app = driver.server_app
 
     static_path = str((Path(__file__).parent / ".." / "dist").resolve())
+
+    app.get("/test/plugins")(handle_getting_plugins)
 
     app.mount("/test",
               StaticFiles(directory=static_path, html=True),

@@ -9,11 +9,13 @@ from nonebot.log import logger
 from nonebot import get_driver
 from nonebot.drivers import BaseWebSocket
 from nonebot.utils import DataclassEncoder
+from nonebot.plugin import get_loaded_plugins
 
 current_adapter = ContextVar("current_adapter")
 
 
 class WebSocket(BaseWebSocket):
+
     def __init__(self, sio: socketio.AsyncServer):
         self.clients = {}
         super().__init__(sio)
@@ -74,3 +76,12 @@ async def handle_ws_reverse(websocket: WebSocket, self_id: str):
             current_adapter.reset(a_t)
             del driver._clients[self_id]
             websocket.clients[self_id].task_done()
+
+
+async def handle_getting_plugins():
+    plugins = get_loaded_plugins()
+
+    def _plugin_to_dict(plugin):
+        return {"name": plugin.name, "matcher": len(plugin.matcher)}
+
+    return {"status": 200, "data": list(map(_plugin_to_dict, plugins))}

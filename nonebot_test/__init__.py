@@ -19,10 +19,10 @@ socket_app = socketio.ASGIApp(sio, socketio_path="socket")
 def init():
     driver = get_driver()
     try:
-        _module = importlib.import_module(
-            f"nonebot_test.drivers.{driver.type}")
+        _module = importlib.import_module(f"nonebot_test.drivers.{driver.type}")
     except ImportError:
-        raise RuntimeError(f"Driver {driver.type} not supported")
+        logger.warning(f"Driver {driver.type} not supported")
+        return
     register_route = getattr(_module, "register_route")
     register_route(driver, socket_app)
     host = str(driver.config.host)
