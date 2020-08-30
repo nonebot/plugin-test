@@ -1,7 +1,8 @@
 module.exports = {
   publicPath: "/test/",
-  outputDir: "nonebot_test/dist",
   assetsDir: "static",
+  outputDir: "nonebot_test/dist",
+  productionSourceMap: false,
   transpileDependencies: ["vuetify"],
   runtimeCompiler: true,
 };
