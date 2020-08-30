@@ -15,7 +15,6 @@
             <v-select outlined dense v-model="event" :items="events"></v-select>
           </v-col>
         </v-row>
-        <!-- TODO: something in form -->
         <!-- * input, textarea, select, switch -->
         <template v-for="(field, index) in fields">
           <v-text-field

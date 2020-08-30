@@ -28,7 +28,7 @@
           </v-col>
         </v-row>
       </v-toolbar>
-      <div class="chat-bg" style="min-height: 300px;"></div>
+      <div class="chat-bg" style="min-height: 300px"></div>
       <v-container fluid class="chat-bg py-0">
         <v-row dense class="mx-0">
           <v-col>
@@ -36,7 +36,7 @@
           </v-col>
           <v-col cols="auto">
             <v-btn
-              style="font-size: 0.8rem;"
+              style="font-size: 0.8rem"
               color="primary"
               small
               rounded

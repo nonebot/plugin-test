@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-toolbar dense flat>
+    <v-toolbar flat dense color="#f2f6f8">
       <v-toolbar-title>分组</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn icon small @click="pushEmpty">

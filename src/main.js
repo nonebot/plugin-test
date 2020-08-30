@@ -7,15 +7,16 @@ import router from "./router";
 import store from "./store";
 
 // axios
-// import "./plugins/axios";
+import Axios from "./plugins/axios";
+Vue.use(Axios);
 
 // vue-socket.io
 import io from "./plugins/socketio";
 io(store);
 
 // toastr
-import toastr from "./plugins/toastr";
-Vue.use(toastr);
+import Toastr from "./plugins/toastr";
+Vue.use(Toastr);
 
 // highlight.js
 import hljs from "highlight.js/lib/core";

@@ -12,6 +12,7 @@ export default (store) =>
       },
       options: {
         path: "/test_ws/socket",
+        autoConnect: false,
         transportOptions: {
           polling: {
             extraHeaders: {

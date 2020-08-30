@@ -11,7 +11,7 @@
     "core-js": "^3.6.5",
     "highlight.js": "^10.1.2",
     "lodash": "^4.17.20",
-    "prettier": "^2.0.5",
+    "prettier": "^2.1.1",
     "stjs": "0.0.5",
     "sweetalert": "^2.1.2",
     "toastr": "^2.1.4",
@@ -20,7 +20,7 @@
     "vue-router": "^3.4.3",
     "vue-socket.io": "^3.0.10",
     "vuedraggable": "^2.24.1",
-    "vuetify": "^2.3.9",
+    "vuetify": "^2.3.10",
     "vuex": "^3.4.0"
   },
   "devDependencies": {

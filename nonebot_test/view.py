@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import os
 import json
 from contextvars import ContextVar
 
@@ -78,10 +79,19 @@ async def handle_ws_reverse(websocket: WebSocket, self_id: str):
             websocket.clients[self_id].task_done()
 
 
+async def handle_project_info():
+    cwd = os.getcwd()
+    return {"status": 200, "data": {"name": os.path.basename(cwd), "dir": cwd}}
+
+
 async def handle_getting_plugins():
     plugins = get_loaded_plugins()
 
     def _plugin_to_dict(plugin):
-        return {"name": plugin.name, "matcher": len(plugin.matcher)}
+        return {
+            "name": plugin.name,
+            "module": plugin.module.__file__,
+            "matcher": len(plugin.matcher)
+        }
 
     return {"status": 200, "data": list(map(_plugin_to_dict, plugins))}

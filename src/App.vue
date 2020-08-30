@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-navigation-drawer app v-model="drawer">
+    <v-navigation-drawer app color="#f2f6f8" v-model="drawer">
       <v-list-item>
         <v-list-item-avatar>
           <v-img src="@/assets/logo.png"></v-img>
@@ -15,7 +15,7 @@
       <Grouper></Grouper>
     </v-navigation-drawer>
 
-    <v-app-bar app color="white" flat>
+    <v-app-bar app color="#f2f6f8" flat>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
 
       <v-spacer></v-spacer>
@@ -31,14 +31,15 @@
       </v-btn>
     </v-app-bar>
 
-    <v-main>
+    <v-main style="background: #f2f6f8">
       <v-container fluid>
         <router-view></router-view>
       </v-container>
     </v-main>
 
-    <v-footer app color="white" padless>
-      <v-container class="pa-0">
+    <v-footer app color="#f2f6f8" padless>
+      <v-container fluid class="pa-0">
+        <v-divider></v-divider>
         <v-row align="center" justify="center">
           <v-col class="text-center" cols="auto">
             <span>
@@ -81,19 +82,41 @@ export default {
   },
   created() {
     // restore groups from localstorage or use default value.
-    let restoreGroup = null;
+    let restoreEnv = null;
     let restoreTest = null;
+    let restoreGroup = null;
     let restoreGroupIndex = null;
     try {
-      restoreGroup = JSON.parse(localStorage.getItem("nonebot-groups"));
+      restoreEnv = JSON.parse(localStorage.getItem("nonebot-envs"));
       restoreTest = JSON.parse(localStorage.getItem("nonebot-tests"));
+      restoreGroup = JSON.parse(localStorage.getItem("nonebot-groups"));
       restoreGroupIndex = JSON.parse(
         localStorage.getItem("nonebot-groupIndex")
       );
     } catch (error) {
       console.error(`[*]无法从本地存储恢复数据！Error: ${error}`);
+      this.$toastr.error("", "无法从本地存储恢复数据");
     }
     const id = uuidv1();
+    this.$store.dispatch(
+      "updateEnv",
+      restoreEnv || {
+        self_id: "12345678",
+        senders: {
+          12345678: {
+            user_id: 12345678,
+            nickname: "机器人",
+            card: "群名片",
+            sex: "male",
+            age: 8,
+            area: "地区",
+            level: 1,
+            role: "member",
+            title: "专属头衔",
+          },
+        },
+      }
+    );
     this.$store.dispatch("updateTests", restoreTest || {});
     this.$store.dispatch(
       "restoreGroups",

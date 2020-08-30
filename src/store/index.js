@@ -9,11 +9,12 @@ export default new Vuex.Store({
     tests: {},
     groupIndex: [],
     defaultGroup: "",
+
     messages: [],
 
     envs: {
       self_id: "",
-      senders: [],
+      senders: {},
     },
   },
   mutations: {
