@@ -84,6 +84,7 @@ export default {
       dir: "",
     },
     plugins: [],
+    matchers: {},
   }),
   methods: {
     getProject() {
@@ -123,10 +124,27 @@ export default {
           console.log("[!] Could not get loaded plugins: ", err);
         });
     },
+    getMatchers() {
+      this.$axios
+        .get("/matchers")
+        .then((res) => {
+          if (res.data.status === 200) {
+            this.matchers = res.data.data;
+          } else {
+            this.$toastr.error("", "Could not get loaded matchers");
+            console.log("[!] Could not get loaded matchers: ", res.data);
+          }
+        })
+        .catch((err) => {
+          this.$toastr.error("", "Could not get loaded matchers: ", err);
+          console.log("[!] Could not get loaded matchers: ", err);
+        });
+    },
   },
   mounted() {
     this.getProject();
     this.getPlugins();
+    this.getMatchers();
   },
 };
 </script>

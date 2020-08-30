@@ -8,6 +8,7 @@ from contextvars import ContextVar
 import socketio
 from nonebot.log import logger
 from nonebot import get_driver
+from nonebot.matcher import matchers
 from nonebot.drivers import BaseWebSocket
 from nonebot.utils import DataclassEncoder
 from nonebot.plugin import get_loaded_plugins
@@ -95,3 +96,22 @@ async def handle_getting_plugins():
         }
 
     return {"status": 200, "data": list(map(_plugin_to_dict, plugins))}
+
+
+async def handle_getting_matchers():
+    matcher_dict = {}
+
+    def _matcher_to_dict(matcher):
+        return {
+            "type": matcher.type,
+            "module": matcher.module,
+            "handlers": len(matcher.handlers),
+            "priority": matcher.priority,
+            "temp": matcher.temp or bool(matcher.expire_time),
+            "block": matcher.block
+        }
+
+    for priority in matchers.keys():
+        matcher_dict[priority] = list(map(_matcher_to_dict, matchers[priority]))
+
+    return {"status": 200, "data": matcher_dict}
