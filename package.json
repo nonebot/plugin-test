@@ -10,6 +10,7 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "highlight.js": "^10.1.2",
+    "jointjs": "^3.2.0",
     "lodash": "^4.17.20",
     "prettier": "^2.1.1",
     "stjs": "0.0.5",
