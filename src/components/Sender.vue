@@ -69,7 +69,7 @@
 <script>
 import Vue from "vue";
 import ST from "stjs/st";
-import object from "lodash/object";
+import _ from "lodash";
 import templates from "./templates";
 import { v1 as uuidv1 } from "uuid";
 import CodeTemplate from "./CodeTemplate";
@@ -141,11 +141,11 @@ export default {
         .root();
     },
     adapters() {
-      return object.keys(this.templates);
+      return _.object.keys(this.templates);
     },
     events() {
       if (this.adapter) {
-        return object.values(this.templates[this.adapter]);
+        return _.object.values(this.templates[this.adapter]);
       } else {
         return [];
       }

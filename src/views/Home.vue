@@ -73,6 +73,7 @@
                 class="flowchart"
                 :class="{ loading: loading }"
                 id="flowchart"
+                ref="flowchart"
               >
                 <Loading
                   class="flowchart-loading-icon"
@@ -88,6 +89,7 @@
 </template>
 
 <script>
+import * as joint from "jointjs";
 import "jointjs/dist/joint.css";
 import Loading from "@/components/Loading";
 
@@ -102,29 +104,36 @@ export default {
       dir: "",
     },
     plugins: [],
-    // matchers: {
-    //   0: [
-    //     {
-    //       type: "message",
-    //       module: "test_package",
-    //       handlers: 1,
-    //       priority: 0,
-    //       temp: true,
-    //       block: true,
-    //     },
-    //   ],
-    //   1: [
-    //     {
-    //       type: "message",
-    //       module: "test_package",
-    //       handlers: 1,
-    //       priority: 0,
-    //       temp: true,
-    //       block: true,
-    //     },
-    //   ],
-    // },
-    matchers: {},
+    matchers: {
+      0: [
+        {
+          type: "message",
+          module: "test_package",
+          handlers: 1,
+          priority: 0,
+          temp: true,
+          block: true,
+        },
+        {
+          type: "message",
+          module: "test_package",
+          handlers: 1,
+          priority: 0,
+          temp: true,
+          block: true,
+        },
+      ],
+      1: [
+        {
+          type: "message",
+          module: "test_package",
+          handlers: 1,
+          priority: 0,
+          temp: true,
+          block: true,
+        },
+      ],
+    },
 
     // flowchart
     loading: true,
@@ -241,7 +250,7 @@ export default {
           }
         })
         .catch((err) => {
-          this.$toastr.error("", "Could not get loaded matchers: ", err);
+          this.$toastr.error("", "Could not get loaded matchers");
           console.log("[!] Could not get loaded matchers: ", err);
         });
     },
@@ -288,27 +297,63 @@ export default {
     //   });
     // },
     drawFlowChart() {
-      const delay = () => new Promise((resolve) => setTimeout(resolve, 500));
-      Promise.all([
-        import(/* webpackChunkName: "jointjs" */ "jointjs"),
-        delay(),
-      ]).then(([joint]) => {
-        let graph = new joint.dia.Graph();
+      let graph = new joint.dia.Graph();
 
-        let paper = new joint.dia.Paper({
-          el: document.getElementById("flowchart"),
-          model: graph,
-          width: "100%",
-          height: "200px",
-          gridSize: 10,
-          drawGrid: true,
-          background: {
-            color: "white",
+      let paper = new joint.dia.Paper({
+        el: document.getElementById("flowchart"),
+        model: graph,
+        width: "100%",
+        height: "200px",
+        gridSize: 10,
+        drawGrid: true,
+        background: {
+          color: "#f3f6f8",
+        },
+      });
+
+      var dragStartPosition = null;
+      paper.on("blank:pointerdown", function (event, x, y) {
+        dragStartPosition = { x: x, y: y };
+      });
+      paper.on("cell:pointerup blank:pointerup", function (cellView, x, y) {
+        dragStartPosition = null;
+      });
+      this.$refs.flowchart.onmousemove = function (event) {
+        if (dragStartPosition)
+          paper.translate(
+            event.offsetX - dragStartPosition.x,
+            event.offsetY - dragStartPosition.y
+          );
+      };
+      this.$refs.flowchart.ontouchmove = function (event) {
+        if (dragStartPosition)
+          paper.translate(
+            event.touches[0].clientX - dragStartPosition.x,
+            event.touches[0].cilentY - dragStartPosition.y
+          );
+      };
+
+      let start = new joint.shapes.basic.Rect({
+        position: { x: 70, y: 15 },
+        size: { width: 50, height: 30 },
+        attrs: {
+          rect: {
+            fill: "#2F495F",
+            "stroke-width": "0px",
+            rx: 30,
+            ry: 30,
           },
-        });
+          text: {
+            text: "Event",
+            fill: "white",
+          },
+        },
+      });
+      start.addTo(graph);
 
-        let start = new joint.shapes.basic.Rect({
-          position: { x: 70, y: 15 },
+      function end(x, y) {
+        let cell = new joint.shapes.basic.Rect({
+          position: { x, y },
           size: { width: 50, height: 30 },
           attrs: {
             rect: {
@@ -318,57 +363,146 @@ export default {
               ry: 30,
             },
             text: {
-              text: "Event",
+              text: "Done",
               fill: "white",
             },
           },
         });
-        start.addTo(graph);
+        graph.addCell(cell);
+        return cell;
+      }
 
-        function end(x, y) {
-          let endCell = new joint.shapes.basic.Rect({
-            position: { x, y },
-            size: { width: 50, height: 30 },
-            attrs: {
-              rect: {
-                fill: "#2F495F",
-                "stroke-width": "0px",
-                rx: 30,
-                ry: 30,
-              },
-              text: {
-                text: "Done",
-                fill: "white",
-              },
+      function pri(x, y, text) {
+        let cell = new joint.shapes.basic.Rect({
+          position: { x, y },
+          size: { width: 30, height: 30 },
+          attrs: {
+            rect: {
+              fill: "#00BC7D",
+              "stroke-width": "0px",
+              rx: 15,
+              ry: 15,
             },
-          });
-          endCell.addTo(graph);
-          return endCell;
-        }
-
-        function link(source, target, breakpoints) {
-          var cell = new joint.shapes.devs.Link({
-            source: { id: source.id },
-            target: { id: target.id },
-            vertices: breakpoints,
-            attrs: {
-              ".connection": {
-                fill: "none",
-                "stroke-linejoin": "round",
-                "stroke-width": "2",
-                stroke: "#8DA1AC",
-              },
+            text: {
+              text: text,
+              fill: "white",
             },
-          });
-          graph.addCell(cell);
-          return cell;
-        }
+          },
+        });
+        graph.addCell(cell);
+        return cell;
+      }
 
-        if (Object.keys(this.matchers).length === 0) {
-          let endCell = end(70, 100);
-          link(start, endCell);
+      function matcher(x, y, text) {
+        let cell = new joint.shapes.basic.Rect({
+          position: { x, y },
+          size: { width: 350, height: 30 },
+          attrs: {
+            rect: {
+              fill: "#4285F4",
+              "stroke-width": "0px",
+              rx: 2,
+              ry: 15,
+            },
+            text: {
+              text: text,
+              fill: "white",
+            },
+          },
+        });
+        graph.addCell(cell);
+        return cell;
+      }
+
+      function link(source, target, breakpoints) {
+        let cell = new joint.shapes.devs.Link({
+          source: { id: source.id },
+          target: { id: target.id },
+          vertices: breakpoints,
+          attrs: {
+            ".connection": {
+              fill: "none",
+              "stroke-linejoin": "round",
+              "stroke-width": "2",
+              stroke: "#8DA1AC",
+            },
+          },
+          connector: { name: "rounded", args: { radius: 10 } },
+        });
+        graph.addCell(cell);
+        return cell;
+      }
+
+      function drawPriority(y, priority, matchers, source, breakpoints) {
+        let y_ = y;
+        let nodes = [];
+        let priCell = pri(80, y_, priority);
+        link(source, priCell, breakpoints);
+        for (let m of matchers) {
+          let matchCell = matcher(
+            200,
+            y_,
+            `${m.type} matcher from ${m.module}, temp: ${m.temp}`
+          );
+          link(priCell, matchCell, [
+            { x: 160, y: y + 15 },
+            { x: 160, y: y_ + 15 },
+          ]);
+          y_ += 40;
+          nodes.push(matchCell);
         }
+        return nodes;
+      }
+
+      function drawCondition(y, nodes) {
+        let cell = new joint.shapes.basic.Polygon({
+          position: { x: 600, y },
+          attrs: {
+            polygon: {
+              points: `40,30 0,45 40,60 80,45`,
+              fill: "#FFB500",
+              "stroke-width": "0px",
+            },
+            text: {
+              text: "Block?",
+              fill: "white",
+            },
+          },
+        });
+        graph.addCell(cell);
+        for (let node of nodes) {
+          console.log(node);
+          link(node, cell, [{ x: 630, y: node.attributes.position.y + 15 }]);
+        }
+        return cell;
+      }
+
+      if (Object.keys(this.matchers).length === 0) {
+        let endCell = end(70, 100);
+        link(start, endCell);
+        return;
+      }
+
+      let y = 70;
+      let nodes = [];
+      let priorities = Object.keys(this.matchers).sort();
+      for (let priority of priorities) {
+        if (nodes.length === 0) {
+          nodes = drawPriority(y, priority, this.matchers[priority], start, []);
+        } else {
+          let cond = drawCondition(y - 100, nodes);
+          nodes = drawPriority(y, priority, this.matchers[priority], cond, [
+            { x: 95, y: y - 40 },
+          ]);
+        }
+        y += 40 * this.matchers[priority].length + 60;
+      }
+
+      paper.fitToContent({
+        minWidth: "100%",
+        padding: 30,
       });
+      this.loading = false;
     },
   },
   mounted() {
@@ -383,26 +517,19 @@ export default {
 <style>
 .flowchart {
   overflow: scroll;
-  text-align: center;
-  font-size: 0px;
+  position: relative;
   min-height: 200px;
   display: flex;
   justify-content: center;
   align-items: center;
   transition: all 1s;
-  padding: 10px;
 }
 .flowchart.loading {
   background-color: #f3f6f8;
 }
 .flowchart > svg {
-  max-width: 100%;
-  height: auto;
+  z-index: 1;
 }
-/* .operation-elment .parallel-element {
-  rx: 5px;
-  ry: 5px;
-} */
 
 .flowchart-loading-icon {
   width: 40px;
