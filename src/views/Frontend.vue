@@ -1,16 +1,23 @@
 <template>
   <div class="frontend">
-    <v-toolbar color="transparent" flat>
+    <v-toolbar color="transparent" flat dense>
       <v-breadcrumbs :items="breadcrumbs" large></v-breadcrumbs>
 
       <v-spacer></v-spacer>
 
-      <v-btn outlined color="success">
+      <v-btn
+        outlined
+        color="success"
+        @click="
+          tempEnvs = { ...envs };
+          settingModal = true;
+        "
+      >
         Settings
         <v-icon small right>fa-unlock-alt</v-icon>
       </v-btn>
     </v-toolbar>
-    <v-container>
+    <v-container fluid>
       <v-row dense>
         <v-col cols="12" sm="4">
           <Messenger></Messenger>
@@ -20,6 +27,20 @@
         </v-col>
       </v-row>
     </v-container>
+    <v-dialog v-model="settingModal" width="900" max-width="95%">
+      <v-card>
+        <v-card-title class="headline">修改设置</v-card-title>
+        <v-divider></v-divider>
+        <v-card-text>
+          <v-form ref="itemForm" lazy-validation></v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn outlined @click="settingModal = false">取消</v-btn>
+          <v-btn outlined color="success">确定</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -40,14 +61,17 @@ export default {
       default: "",
     },
   },
-  data: () => ({}),
+  data: () => ({
+    settingModal: false,
+    tempEnvs: null,
+  }),
   computed: {
-    env: {
+    envs: {
       get() {
-        return this.$store.state.env;
+        return this.$store.state.envs;
       },
       set(value) {
-        console.log("[i] Update env");
+        console.log("[i] Update envs");
         this.$store.dispatch("updateEnv", value);
       },
     },

@@ -19,6 +19,14 @@
           <v-col class="text-right">
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
+                <v-btn class="mr-2" icon small v-bind="attrs" v-on="on"
+                  ><v-icon small>fa-terminal</v-icon></v-btn
+                >
+              </template>
+              <span>Terminal</span>
+            </v-tooltip>
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
                 <v-btn icon small v-bind="attrs" v-on="on"
                   ><v-icon small>fa-trash-alt</v-icon></v-btn
                 >
@@ -28,7 +36,7 @@
           </v-col>
         </v-row>
       </v-toolbar>
-      <div class="chat-bg" style="min-height: 300px"></div>
+      <div class="chat chat-bg"></div>
       <v-container fluid class="chat-bg py-0">
         <v-row dense class="mx-0">
           <v-col>
@@ -94,6 +102,10 @@ export default {
 </script>
 
 <style scoped>
+.chat {
+  min-height: 400px;
+  overflow-y: scroll;
+}
 .chat-bg {
   background-color: #f3f6f9;
 }

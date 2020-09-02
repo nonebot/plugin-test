@@ -69,7 +69,7 @@
 <script>
 import Vue from "vue";
 import ST from "stjs/st";
-import _ from "lodash";
+import object from "lodash";
 import templates from "./templates";
 import { v1 as uuidv1 } from "uuid";
 import CodeTemplate from "./CodeTemplate";
@@ -94,8 +94,8 @@ export default {
     changed: false,
   }),
   computed: {
-    env() {
-      return this.$store.state.env;
+    envs() {
+      return this.$store.state.envs;
     },
     tests() {
       return this.$store.state.tests;
@@ -133,7 +133,7 @@ export default {
     },
     json() {
       return ST.select({
-        ...this.env,
+        ...this.envs,
         ...this.data,
         current_time: Math.floor(new Date().getTime() / 1000),
       })
@@ -141,11 +141,11 @@ export default {
         .root();
     },
     adapters() {
-      return _.object.keys(this.templates);
+      return object.keys(this.templates);
     },
     events() {
       if (this.adapter) {
-        return _.object.values(this.templates[this.adapter]);
+        return object.values(this.templates[this.adapter]);
       } else {
         return [];
       }
