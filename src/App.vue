@@ -1,14 +1,16 @@
 <template>
   <v-app>
     <v-navigation-drawer app color="#f2f6f8" v-model="drawer">
-      <v-list-item>
-        <v-list-item-avatar>
-          <v-img src="@/assets/logo.png"></v-img>
-        </v-list-item-avatar>
-        <v-list-item-content>
-          <v-list-item-title><h2>NoneBot</h2></v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
+      <router-link class="home" to="/">
+        <v-list-item>
+          <v-list-item-avatar>
+            <v-img src="@/assets/logo.png"></v-img>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title><h2>NoneBot</h2></v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </router-link>
 
       <v-divider></v-divider>
 
@@ -138,6 +140,19 @@ export default {
 </script>
 
 <style scoped>
+.home {
+  color: inherit;
+  text-decoration: none;
+}
+.home:active {
+  text-decoration: none;
+}
+.home:hover {
+  text-decoration: none;
+}
+.home:visited {
+  text-decoration: none;
+}
 footer span {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }

@@ -214,8 +214,8 @@ export default {
         model: this.graph,
         width: "100%",
         height: "200px",
-        gridSize: 10,
-        drawGrid: true,
+        // gridSize: 10,
+        // drawGrid: true,
         background: {
           color: "#f3f6f8",
         },
