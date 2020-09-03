@@ -122,7 +122,7 @@
 </template>
 
 <script>
-// import { WOW } from "wowjs";
+import { WOW } from "wowjs";
 
 export default {
   name: "Messenger",
@@ -139,19 +139,19 @@ export default {
     // },
   },
   methods: {
-    // initWOW: function () {
-    //   var wow = new WOW({
-    //     noxClass: "wow",
-    //     animateClass: "animated",
-    //     offset: 0,
-    //     mobile: true,
-    //     live: true,
-    //   });
-    //   wow.init();
-    // },
+    initWOW: function () {
+      var wow = new WOW({
+        noxClass: "wow",
+        animateClass: "animated",
+        offset: 0,
+        mobile: true,
+        live: true,
+      });
+      wow.init();
+    },
   },
   mounted() {
-    // this.initWOW();
+    this.initWOW();
   },
 };
 </script>
