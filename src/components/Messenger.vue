@@ -132,17 +132,11 @@ import "animate.css/animate.min.css";
 
 export default {
   name: "Messenger",
-  data: () => ({
-    messages: [
-      { position: "right", msg: "奥术大师大所大所大所大所大多所大所多" },
-      { position: "left", msg: "奥术大师大所大所大所大所大多所大所多" },
-      { position: "center", msg: "您已被禁言" },
-    ],
-  }),
+  data: () => ({}),
   computed: {
-    // messages() {
-    //   return this.$store.state.messages;
-    // },
+    messages() {
+      return this.$store.state.messages;
+    },
   },
   methods: {
     initWOW: function () {
