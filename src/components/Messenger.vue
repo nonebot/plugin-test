@@ -42,7 +42,7 @@
             v-if="item.position === 'right'"
             justify="end"
             :key="index"
-            class="message"
+            class="message wow animate__fadeInRight"
           >
             <div
               class="message-box"
@@ -56,7 +56,7 @@
             v-else-if="item.position === 'left'"
             justify="start"
             :key="index"
-            class="message"
+            class="message wow animate__fadeInLeft"
           >
             <v-avatar color="transparent" size="36">
               <v-img src="@/assets/logo.png"></v-img>
@@ -66,7 +66,12 @@
               v-html="item.msg.replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;')"
             ></div>
           </v-row>
-          <v-row v-else justify="center" :key="index" class="notify">
+          <v-row
+            v-else
+            justify="center"
+            :key="index"
+            class="notify mt-1 wow animate__fadeIn"
+          >
             <div class="notify-box">
               <span style="display: inline; white-space: nowrap">
                 <v-icon x-small color="blue" left>fa-info-circle</v-icon>
@@ -123,6 +128,7 @@
 
 <script>
 import { WOW } from "wowjs";
+import "animate.css/animate.min.css";
 
 export default {
   name: "Messenger",
@@ -142,7 +148,7 @@ export default {
     initWOW: function () {
       var wow = new WOW({
         noxClass: "wow",
-        animateClass: "animated",
+        animateClass: "animate__animated",
         offset: 0,
         mobile: true,
         live: true,
