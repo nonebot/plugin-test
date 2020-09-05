@@ -90,7 +90,6 @@
 
 <script>
 import * as joint from "jointjs";
-import "jointjs/dist/joint.css";
 import Loading from "@/components/Loading";
 
 export default {

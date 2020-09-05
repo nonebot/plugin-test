@@ -21,7 +21,6 @@ Vue.use(Toastr);
 // highlight.js
 import hljs from "highlight.js/lib/core";
 import json from "highlight.js/lib/languages/json";
-import "highlight.js/styles/tomorrow-night.css";
 
 hljs.registerLanguage("json", json);
 

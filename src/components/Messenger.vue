@@ -128,7 +128,6 @@
 
 <script>
 import { WOW } from "wowjs";
-import "animate.css/animate.min.css";
 
 export default {
   name: "Messenger",
