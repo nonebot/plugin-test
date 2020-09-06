@@ -135,6 +135,15 @@ export default {
       }
     );
     this.$store.dispatch("updateGroupIndex", restoreGroupIndex || [id]);
+    if (this.$store.state.envs.self_id) {
+      this.$socket.io.opts.transportOptions.polling.extraHeaders[
+        "X-Self-ID"
+      ] = this.$store.state.envs.self_id;
+      this.$socket.io.opts.transportOptions.polling.extraHeaders[
+        "Authorization"
+      ] = this.$store.state.envs.access_token;
+      this.$socket.connect();
+    }
   },
 };
 </script>

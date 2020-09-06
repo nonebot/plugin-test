@@ -77,7 +77,9 @@ async def handle_ws_reverse(websocket: WebSocket, self_id: str):
         finally:
             current_adapter.reset(a_t)
             del driver._clients[self_id]
-            websocket.clients[self_id].task_done()
+
+            websocket.clients.get(
+                self_id) and websocket.clients[self_id].task_done()
 
 
 async def handle_project_info():

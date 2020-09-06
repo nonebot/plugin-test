@@ -16,7 +16,7 @@ export default (store) =>
         transportOptions: {
           polling: {
             extraHeaders: {
-              Authorizarion: store.state.envs.access_token,
+              Authorization: store.state.envs.access_token,
               "X-Self-ID": store.state.envs.self_id,
             },
           },

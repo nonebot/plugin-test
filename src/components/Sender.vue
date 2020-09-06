@@ -102,7 +102,7 @@ export default {
     },
     fields() {
       if (this.adapter && this.event) {
-        return this.templates[this.adapter][this.event].fields;
+        return this.templates[this.adapter].events[this.event].fields;
       } else {
         return [];
       }
@@ -112,7 +112,7 @@ export default {
         if (this.testId && this.adapter && this.event) {
           return this.test.data;
         } else if (this.adapter && this.event) {
-          const data = this.templates[this.adapter][this.event].data;
+          const data = this.templates[this.adapter].events[this.event].data;
           this.$set(this.test, "data", data);
           return data;
         } else {
@@ -126,7 +126,7 @@ export default {
     },
     code() {
       if (this.adapter && this.event) {
-        return this.templates[this.adapter][this.event].template;
+        return this.templates[this.adapter].events[this.event].template;
       } else {
         return {};
       }
@@ -145,7 +145,7 @@ export default {
     },
     events() {
       if (this.adapter) {
-        return object.values(this.templates[this.adapter]);
+        return object.values(this.templates[this.adapter].events);
       } else {
         return [];
       }
@@ -168,7 +168,11 @@ export default {
       set(value) {
         this.changed = true;
         this.$set(this.test, "event", value);
-        this.$set(this.test, "data", this.templates[this.adapter][value].data);
+        this.$set(
+          this.test,
+          "data",
+          this.templates[this.adapter].events[value].data
+        );
       },
     },
   },
@@ -187,8 +191,23 @@ export default {
   methods: {
     submit() {
       if (this.$refs.form.validate()) {
-        console.log(this.adapter, this.json);
+        if (this.$socket.disconnected) {
+          this.$toastr.error(
+            "Please config settings.",
+            "WebSocket not connected!"
+          );
+          return;
+        }
+        console.log(
+          `[☝] Send ${this.adapter} Event: ${JSON.stringify(this.json)}`
+        );
         this.$socket.emit("event", [this.adapter.toLowerCase(), this.json]);
+        if (this.templates[this.adapter].events[this.event].action) {
+          this.templates[this.adapter].events[this.event].action(
+            this,
+            this.json
+          );
+        }
       }
     },
     save() {

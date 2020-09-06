@@ -36,13 +36,15 @@
           </v-col>
         </v-row>
       </v-toolbar>
-      <v-container fluid class="chat chat-bg">
+      <v-container fluid ref="chat" class="chat chat-bg">
         <template v-for="(item, index) in messages">
           <v-row
             v-if="item.position === 'right'"
             justify="end"
             :key="index"
             class="message wow animate__fadeInRight"
+            data-wow-duration="0.7s"
+            data-wow-offset="100"
           >
             <div
               class="message-box"
@@ -57,6 +59,8 @@
             justify="start"
             :key="index"
             class="message wow animate__fadeInLeft"
+            data-wow-duration="0.7s"
+            data-wow-offset="100"
           >
             <v-avatar color="transparent" size="36">
               <v-img src="@/assets/logo.png"></v-img>
@@ -71,6 +75,8 @@
             justify="center"
             :key="index"
             class="notify mt-1 wow animate__fadeIn"
+            data-wow-duration="0.7s"
+            data-wow-offset="100"
           >
             <div class="notify-box">
               <span style="display: inline; white-space: nowrap">
@@ -131,22 +137,31 @@ import { WOW } from "wowjs";
 
 export default {
   name: "Messenger",
-  data: () => ({}),
+  data: () => ({
+    wow: null,
+  }),
   computed: {
     messages() {
+      if (this.wow) {
+        var that = this;
+        this.$nextTick(function () {
+          that.wow.sync();
+        });
+      }
       return this.$store.state.messages;
     },
   },
   methods: {
     initWOW: function () {
-      var wow = new WOW({
+      this.wow = new WOW({
+        scrollContainer: ".chat",
         noxClass: "wow",
         animateClass: "animate__animated",
         offset: 0,
         mobile: true,
         live: true,
       });
-      wow.init();
+      this.wow.init();
     },
   },
   mounted() {
@@ -156,9 +171,13 @@ export default {
 </script>
 
 <style scoped>
+.wow {
+  visibility: hidden;
+}
+
 .chat {
-  min-height: 400px;
-  overflow-y: scroll;
+  height: 400px;
+  overflow: hidden scroll;
 }
 .chat-bg {
   background-color: #f3f6f9;
