@@ -44,7 +44,7 @@
             :key="index"
             class="message wow animate__fadeInRight"
             data-wow-duration="0.7s"
-            data-wow-offset="100"
+            :data-wow-offset="offset"
           >
             <div
               class="message-box"
@@ -60,7 +60,7 @@
             :key="index"
             class="message wow animate__fadeInLeft"
             data-wow-duration="0.7s"
-            data-wow-offset="100"
+            :data-wow-offset="offset"
           >
             <v-avatar color="transparent" size="36">
               <v-img src="@/assets/logo.png"></v-img>
@@ -76,7 +76,7 @@
             :key="index"
             class="notify mt-1 wow animate__fadeIn"
             data-wow-duration="0.7s"
-            data-wow-offset="100"
+            :data-wow-offset="offset"
           >
             <div class="notify-box">
               <span style="display: inline; white-space: nowrap">
@@ -133,12 +133,14 @@
 </template>
 
 <script>
+import $ from "jquery";
 import { WOW } from "wowjs";
 
 export default {
   name: "Messenger",
   data: () => ({
     wow: null,
+    offset: 0,
   }),
   computed: {
     messages() {
@@ -162,6 +164,19 @@ export default {
         live: true,
       });
       this.wow.init();
+      this.offset =
+        $(window).height() +
+        $(window).scrollTop() -
+        $(".chat").offset().top -
+        350;
+      var that = this;
+      window.onscroll = function () {
+        that.offset =
+          $(window).height() +
+          $(window).scrollTop() -
+          $(".chat").offset().top -
+          350;
+      };
     },
   },
   mounted() {
