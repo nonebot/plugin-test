@@ -3,7 +3,9 @@
 
 import os
 import json
+import asyncio
 from contextvars import ContextVar
+from nonebot import adapters
 
 import socketio
 from nonebot.log import logger
@@ -17,7 +19,6 @@ current_adapter = ContextVar("current_adapter")
 
 
 class WebSocket(BaseWebSocket):
-
     def __init__(self, sio: socketio.AsyncServer):
         self.clients = {}
         super().__init__(sio)
@@ -43,6 +44,23 @@ class WebSocket(BaseWebSocket):
         await self.websocket.emit("api", [current_adapter.get(), data])
 
 
+async def _bot_handle_message(bot, adapter, data):
+    driver = get_driver()
+    a_t = current_adapter.set(adapter)
+
+    try:
+        await bot.handle_message(data)
+    except Exception as e:
+        logger.error(e)
+    finally:
+        current_adapter.reset(a_t)
+        if "post_type" in data:
+            del driver._clients[bot.self_id]
+
+        bot.websocket.clients.get(
+            bot.self_id) and bot.websocket.clients[bot.self_id].task_done()
+
+
 async def handle_ws_reverse(websocket: WebSocket, self_id: str):
     driver = get_driver()
 
@@ -55,8 +73,8 @@ async def handle_ws_reverse(websocket: WebSocket, self_id: str):
         if adapter == "websocket.close":
             continue
 
-        if adapter in driver._adapters:
-            BotClass = driver._adapters[adapter]
+        if adapter.lower() in driver._adapters:
+            BotClass = driver._adapters[adapter.lower()]
             bot = BotClass(driver,
                            "websocket",
                            driver.config,
@@ -68,18 +86,8 @@ async def handle_ws_reverse(websocket: WebSocket, self_id: str):
             continue
 
         driver._clients[self_id] = bot
-        a_t = current_adapter.set(adapter)
 
-        try:
-            await bot.handle_message(data)
-        except Exception as e:
-            logger.error(e)
-        finally:
-            current_adapter.reset(a_t)
-            del driver._clients[self_id]
-
-            websocket.clients.get(
-                self_id) and websocket.clients[self_id].task_done()
+        asyncio.create_task(_bot_handle_message(bot, adapter, data))
 
 
 async def handle_project_info():
@@ -114,6 +122,7 @@ async def handle_getting_matchers():
         }
 
     for priority in matchers.keys():
-        matcher_dict[priority] = list(map(_matcher_to_dict, matchers[priority]))
+        matcher_dict[priority] = list(map(_matcher_to_dict,
+                                          matchers[priority]))
 
     return {"status": 200, "data": matcher_dict}

@@ -1,5 +1,23 @@
 const required = (v) => !!v || "该项必填";
 
+function CQArray2Text(array) {
+  if (!(array instanceof Array)) {
+    return "";
+  }
+  let text = "";
+  for (let segment of array) {
+    if (segment.type === "text") {
+      text += segment.data.text;
+    } else {
+      text += "[CQ:" + segment.type;
+      for (key of Object.keys(segment.data)) {
+        text += key + "=" + segment.data[key];
+      }
+    }
+  }
+  return text;
+}
+
 const templates = {
   CQHTTP: {
     events: {
@@ -46,7 +64,7 @@ const templates = {
           post_type: "message",
           message_type: "private",
           sub_type: "{{ sub_type }}",
-          message_id: 10000,
+          message_id: "{{ message_id }}",
           user_id: "{{ parseInt(user_id) }}",
           message: "{{ message }}",
           raw_message: "{{ message }}",
@@ -133,7 +151,7 @@ const templates = {
           post_type: "message",
           message_type: "group",
           sub_type: "{{ sub_type }}",
-          message_id: 10000,
+          message_id: "{{ message_id }}",
           group_id: "{{ parseInt(group_id) }}",
           user_id: "{{ parseInt(user_id) }}",
           anonymous:
@@ -643,7 +661,68 @@ const templates = {
         },
       },
     },
-    apis: {},
+    apis: {
+      send_private_msg(vue, data) {
+        vue.$store.dispatch("appendMessage", {
+          position: "left",
+          msg:
+            typeof data.params.message === "string"
+              ? data.params.message
+              : CQArray2Text(data.params.message),
+        });
+        vue.$socket.emit("event", [
+          "CQHTTP",
+          {
+            status: "success",
+            retcode: 1200,
+            data: {
+              message_id: vue.$store.state.messages.length,
+            },
+            echo: data.echo,
+          },
+        ]);
+      },
+      send_group_msg(vue, data) {
+        vue.$store.dispatch("appendMessage", {
+          position: "left",
+          msg:
+            typeof data.params.message === "string"
+              ? data.params.message
+              : CQArray2Text(data.params.message),
+        });
+        vue.$socket.emit("event", [
+          "CQHTTP",
+          {
+            status: "success",
+            retcode: 1200,
+            data: {
+              message_id: vue.$store.state.messages.length,
+            },
+            echo: data.echo,
+          },
+        ]);
+      },
+      send_msg(vue, data) {
+        vue.$store.dispatch("appendMessage", {
+          position: "left",
+          msg:
+            typeof data.params.message === "string"
+              ? data.params.message
+              : CQArray2Text(data.params.message),
+        });
+        vue.$socket.emit("event", [
+          "CQHTTP",
+          {
+            status: "success",
+            retcode: 1200,
+            data: {
+              message_id: vue.$store.state.messages.length,
+            },
+            echo: data.echo,
+          },
+        ]);
+      },
+    },
   },
   // Mirai: {},
 };

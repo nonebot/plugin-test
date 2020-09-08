@@ -136,6 +136,7 @@ export default {
         ...this.envs,
         ...this.data,
         current_time: Math.floor(new Date().getTime() / 1000),
+        message_id: this.$store.state.messages.length,
       })
         .transformWith(this.code)
         .root();
@@ -188,6 +189,30 @@ export default {
     },
     $route: "restoreTest",
   },
+  sockets: {
+    api(data) {
+      // data should be list type like: [adapter, data]
+      try {
+        console.log(`[👇] Receive ${data[0]} API: ${JSON.stringify(data[1])}`);
+        if (!this.templates[data[0]]) {
+          console.log(`[!] Adapter ${data[0]} Not Found!`);
+          this.$toastr.error(`Adapter ${data[0]} Not Found`, "Unknow Adapter!");
+        } else if (!this.templates[data[0]].apis[data[1].action]) {
+          console.log(
+            `[!] Adapter ${data[0]} API ${data[1].action} Not Found!`
+          );
+          this.$toastr.error(
+            `Adapter ${data[0]} API ${data[1].action} Not Found`,
+            "Unknow API!"
+          );
+        } else {
+          this.templates[data[0]].apis[data[1].action](this, data[1]);
+        }
+      } catch (error) {
+        console.error("[!] Error when parsing api request:", error);
+      }
+    },
+  },
   methods: {
     submit() {
       if (this.$refs.form.validate()) {
@@ -201,7 +226,7 @@ export default {
         console.log(
           `[☝] Send ${this.adapter} Event: ${JSON.stringify(this.json)}`
         );
-        this.$socket.emit("event", [this.adapter.toLowerCase(), this.json]);
+        this.$socket.emit("event", [this.adapter, this.json]);
         if (this.templates[this.adapter].events[this.event].action) {
           this.templates[this.adapter].events[this.event].action(
             this,
