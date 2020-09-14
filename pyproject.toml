@@ -8,9 +8,6 @@ readme = "README.md"
 homepage = "https://docs.nonebot.dev/"
 repository = "https://github.com/nonebot/nonebot-test"
 keywords = ["nonebot", "qq", "qqbot", "mirai", "coolq"]
-packages = [
-    { include = "nonebot_test" }
-]
 
 [tool.poetry.dependencies]
 python = "^3.7"
