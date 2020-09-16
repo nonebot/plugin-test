@@ -76,6 +76,7 @@ const templates = {
           vue.$store.dispatch("appendMessage", {
             position: "right",
             msg: data.message,
+            data,
           });
         },
       },
@@ -166,6 +167,7 @@ const templates = {
           vue.$store.dispatch("appendMessage", {
             position: "right",
             msg: data.message,
+            data,
           });
         },
       },
@@ -238,6 +240,7 @@ const templates = {
           vue.$store.dispatch("appendMessage", {
             position: "center",
             msg: "群文件上传",
+            data,
           });
         },
       },
@@ -285,6 +288,7 @@ const templates = {
           vue.$store.dispatch("appendMessage", {
             position: "center",
             msg: "群管理员变动",
+            data,
           });
         },
       },
@@ -341,6 +345,7 @@ const templates = {
           vue.$store.dispatch("appendMessage", {
             position: "center",
             msg: `${data.user_id}离开了群聊`,
+            data,
           });
         },
       },
@@ -397,6 +402,7 @@ const templates = {
           vue.$store.dispatch("appendMessage", {
             position: "center",
             msg: `${data.user_id}加入了本群`,
+            data,
           });
         },
       },
@@ -462,6 +468,7 @@ const templates = {
           vue.$store.dispatch("appendMessage", {
             position: "center",
             msg: `${data.user_id}被管理员禁言`,
+            data,
           });
         },
       },
@@ -491,6 +498,7 @@ const templates = {
           vue.$store.dispatch("appendMessage", {
             position: "center",
             msg: `你与${data.user_id}成为了好友`,
+            data,
           });
         },
       },
@@ -535,6 +543,7 @@ const templates = {
           vue.$store.dispatch("appendMessage", {
             position: "center",
             msg: `${data.user_id}申请添加你为好友`,
+            data,
           });
         },
       },
@@ -597,6 +606,7 @@ const templates = {
           vue.$store.dispatch("appendMessage", {
             position: "center",
             msg: `${data.user_id}申请/邀请你加入群聊${data.group_id}`,
+            data,
           });
         },
       },
@@ -717,6 +727,59 @@ const templates = {
             retcode: 1200,
             data: {
               message_id: vue.$store.state.messages.length,
+            },
+            echo: data.echo,
+          },
+        ]);
+      },
+      delete_msg(vue, data) {
+        if (data.params.message_id >= vue.$store.state.messages.length) {
+          vue.$socket.emit("event", [
+            "CQHTTP",
+            {
+              status: "failed",
+              retcode: 1404,
+              data: null,
+              echo: data.echo,
+            },
+          ]);
+        }
+        vue.$store.dispatch("deleteMessage", data.params.message_id);
+        vue.$socket.emit("event", [
+          "CQHTTP",
+          {
+            status: "success",
+            retcode: 1200,
+            data: null,
+            echo: data.echo,
+          },
+        ]);
+      },
+      get_msg(vue, data) {
+        if (data.params.message_id >= vue.$store.state.messages.length) {
+          vue.$socket.emit("event", [
+            "CQHTTP",
+            {
+              status: "failed",
+              retcode: 1404,
+              data: null,
+              echo: data.echo,
+            },
+          ]);
+        }
+        const message = vue.$store.state.messages[data.params.message_id];
+        vue.$socket.emit("event", [
+          "CQHTTP",
+          {
+            status: "success",
+            retcode: 1200,
+            data: {
+              time: message.time,
+              message_type: message.message_type,
+              message_id: message.message_id,
+              real_id: message.message_id,
+              sender: message.sender,
+              message: message.message,
             },
             echo: data.echo,
           },

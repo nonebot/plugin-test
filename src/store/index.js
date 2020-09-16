@@ -67,6 +67,11 @@ export default new Vuex.Store({
         state.messages.concat(payload);
       }
     },
+    deleteMessage: (state, payload) => {
+      if (payload) {
+        Vue.delete(state, payload);
+      }
+    },
     updateEnv: (state, payload) => {
       if (payload) {
         state.envs = payload;
@@ -103,6 +108,9 @@ export default new Vuex.Store({
     },
     appendMessages: ({ commit }, payload) => {
       commit("appendMessages", payload);
+    },
+    deleteMessage: ({ commit }, payload) => {
+      commit("deleteMessage", payload);
     },
     updateEnv: ({ commit }, payload) => {
       commit("updateEnv", payload);
