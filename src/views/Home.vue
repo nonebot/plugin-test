@@ -276,7 +276,9 @@ export default {
       let Y = 70;
       let nodes = [];
       let conds = [];
-      let priorities = Object.keys(this.matchers).sort();
+      let priorities = Object.keys(this.matchers).sort(
+        (x, y) => Number(x) - Number(y)
+      );
       for (let priority of priorities) {
         if (nodes.length === 0) {
           nodes = this.drawPriority(
