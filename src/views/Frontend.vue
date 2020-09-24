@@ -32,6 +32,7 @@
         <v-card-title class="headline">修改设置</v-card-title>
         <v-divider></v-divider>
         <v-card-text>
+          <!-- TODO: Settings -->
           <v-form ref="itemForm" lazy-validation></v-form>
         </v-card-text>
         <v-card-actions>

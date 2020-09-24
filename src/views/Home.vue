@@ -63,7 +63,7 @@
               </v-container>
             </v-expansion-panel-content>
           </v-expansion-panel>
-          <!-- TODO: Matcher Panel -->
+          <!-- Matcher Panel -->
           <v-expansion-panel>
             <v-expansion-panel-header>
               Matcher Overview
@@ -81,6 +81,13 @@
                 ></Loading>
               </div>
             </v-expansion-panel-content>
+          </v-expansion-panel>
+          <!-- TODO: Config Panel -->
+          <v-expansion-panel>
+            <v-expansion-panel-header>
+              Config Overview
+            </v-expansion-panel-header>
+            <v-expansion-panel-content></v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
       </v-col>
