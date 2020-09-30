@@ -48,7 +48,9 @@
           >
             <div
               class="message-box"
-              v-html="item.msg.replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;')"
+              v-html="
+                escape(item.msg).replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;')
+              "
             ></div>
             <v-avatar color="blue lighten-2" size="36">
               <v-icon small>fa-user</v-icon>
@@ -67,7 +69,9 @@
             </v-avatar>
             <div
               class="message-box"
-              v-html="item.msg.replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;')"
+              v-html="
+                escape(item.msg).replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;')
+              "
             ></div>
           </v-row>
           <v-row
@@ -84,7 +88,9 @@
               </span>
               <span
                 v-html="
-                  item.msg.replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;')
+                  escape(item.msg)
+                    .replace(/\n/g, '<br/>')
+                    .replace(/ /g, '&nbsp;')
                 "
               ></span>
             </div>
@@ -154,7 +160,10 @@ export default {
     },
   },
   methods: {
-    initWOW: function () {
+    escape(s) {
+      return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
+    },
+    initWOW() {
       this.wow = new WOW({
         scrollContainer: ".chat",
         noxClass: "wow",
