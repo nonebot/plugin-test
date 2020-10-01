@@ -15,10 +15,13 @@ from nonebot.drivers import BaseWebSocket
 from nonebot.utils import DataclassEncoder
 from nonebot.plugin import get_loaded_plugins
 
+from nonebot_test.utils import AutoEncoder
+
 current_adapter = ContextVar("current_adapter")
 
 
 class WebSocket(BaseWebSocket):
+
     def __init__(self, sio: socketio.AsyncServer):
         self.clients = {}
         super().__init__(sio)
@@ -122,7 +125,16 @@ async def handle_getting_matchers():
         }
 
     for priority in matchers.keys():
-        matcher_dict[priority] = list(map(_matcher_to_dict,
-                                          matchers[priority]))
+        matcher_dict[priority] = list(map(_matcher_to_dict, matchers[priority]))
 
     return {"status": 200, "data": matcher_dict}
+
+
+async def handle_getting_config():
+    driver = get_driver()
+
+    config = driver.config
+    return {
+        "status": 200,
+        "data": json.loads(json.dumps(config.dict(), cls=AutoEncoder))
+    }

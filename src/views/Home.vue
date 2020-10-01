@@ -151,6 +151,7 @@ export default {
     //   ],
     // },
     matchers: {},
+    config: {},
 
     // flowchart
     loading: true,
@@ -210,6 +211,22 @@ export default {
         .catch((err) => {
           this.$toastr.error("", "Could not get loaded matchers");
           console.log("[!] Could not get loaded matchers: ", err);
+        });
+    },
+    getConfig() {
+      this.$axios
+        .get("/config")
+        .then((res) => {
+          if (res.data.status === 200) {
+            this.config = res.data.data;
+          } else {
+            this.$toastr.error("", "Could not get loaded config");
+            console.log("[!] Could not get loaded config: ", res.data);
+          }
+        })
+        .catch((err) => {
+          this.$toastr.error("", "Could not get loaded config");
+          console.log("[!] Could not get loaded config: ", err);
         });
     },
     drawFlowChart() {
@@ -446,6 +463,7 @@ export default {
     this.getProject();
     this.getPlugins();
     this.getMatchers();
+    this.getConfig();
   },
 };
 </script>

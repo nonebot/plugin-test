@@ -6,7 +6,8 @@ from pathlib import Path
 from nonebot.drivers.fastapi import Driver
 from fastapi.staticfiles import StaticFiles
 
-from nonebot_test.view import handle_project_info, handle_getting_plugins, handle_getting_matchers
+from nonebot_test.view import handle_project_info, handle_getting_plugins
+from nonebot_test.view import handle_getting_matchers, handle_getting_config
 
 
 def register_route(driver: Driver, socketio):
@@ -17,6 +18,7 @@ def register_route(driver: Driver, socketio):
     app.get("/test/info")(handle_project_info)
     app.get("/test/plugins")(handle_getting_plugins)
     app.get("/test/matchers")(handle_getting_matchers)
+    app.get("/test/config")(handle_getting_config)
 
     app.mount("/test",
               StaticFiles(directory=static_path, html=True),
