@@ -17,10 +17,18 @@
     </v-row>
     <v-row>
       <v-col cols="12">
-        <v-expansion-panels multiple :value="[0, 1]">
+        <v-expansion-panels multiple v-model="panel">
           <!-- Plugin Panel -->
           <v-expansion-panel>
-            <v-expansion-panel-header>Plugin Overview</v-expansion-panel-header>
+            <v-expansion-panel-header>
+              <template v-slot:default> Plugin Overview </template>
+              <template v-slot:actions>
+                <v-btn icon @click.stop="getPlugins" class="mr-2"
+                  ><v-icon>fa-sync-alt</v-icon>
+                </v-btn>
+                <v-icon>fa-chevron-down</v-icon>
+              </template>
+            </v-expansion-panel-header>
             <v-expansion-panel-content>
               <v-container>
                 <v-row>
@@ -66,7 +74,13 @@
           <!-- Matcher Panel -->
           <v-expansion-panel>
             <v-expansion-panel-header>
-              Matcher Overview
+              <template v-slot:default> Matcher Overview </template>
+              <template v-slot:actions>
+                <v-btn icon @click.stop="getMatchers" class="mr-2"
+                  ><v-icon>fa-sync-alt</v-icon>
+                </v-btn>
+                <v-icon>fa-chevron-down</v-icon>
+              </template>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
               <div
@@ -85,9 +99,32 @@
           <!-- TODO: Config Panel -->
           <v-expansion-panel>
             <v-expansion-panel-header>
-              Config Overview
+              <template v-slot:default> Config Overview </template>
+              <template v-slot:actions>
+                <v-btn icon @click.stop="getConfig" class="mr-2"
+                  ><v-icon>fa-sync-alt</v-icon>
+                </v-btn>
+                <v-icon>fa-chevron-down</v-icon>
+              </template>
             </v-expansion-panel-header>
-            <v-expansion-panel-content></v-expansion-panel-content>
+            <v-expansion-panel-content>
+              <v-simple-table>
+                <template v-slot:default>
+                  <thead>
+                    <tr>
+                      <th class="text-left">Key</th>
+                      <th class="text-left">Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(value, key) in config" :key="key">
+                      <td>{{ key }}</td>
+                      <td>{{ value }}</td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
       </v-col>
@@ -105,6 +142,8 @@ export default {
     Loading,
   },
   data: () => ({
+    panel: [0, 1, 2],
+
     projectInfo: {
       name: "",
       dir: "",
@@ -197,6 +236,7 @@ export default {
         });
     },
     getMatchers() {
+      this.loading = true;
       this.$axios
         .get("/matchers")
         .then((res) => {
