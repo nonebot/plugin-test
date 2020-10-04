@@ -10,7 +10,7 @@ function CQArray2Text(array) {
       text += segment.data.text;
     } else {
       text += "[CQ:" + segment.type;
-      for (key of Object.keys(segment.data)) {
+      for (let key of Object.keys(segment.data)) {
         text += key + "=" + segment.data[key];
       }
     }
