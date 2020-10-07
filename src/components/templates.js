@@ -785,6 +785,215 @@ const templates = {
           },
         ]);
       },
+      send_like(vue, data) {
+        vue.$store.dispatch("appendMessage", {
+          position: "center",
+          msg: `向${data.params.user_id}发送${data.params.times}次好友赞`,
+        });
+        vue.$socket.emit("event", [
+          "CQHTTP",
+          {
+            status: "success",
+            retcode: 1200,
+            data: null,
+            echo: data.echo,
+          },
+        ]);
+      },
+      set_group_kick(vue, data) {
+        vue.$store.dispatch("appendMessage", {
+          position: "center",
+          msg: `群${data.params.group_id}踢出${data.params.user_id}`,
+        });
+        vue.$socket.emit("event", [
+          "CQHTTP",
+          {
+            status: "success",
+            retcode: 1200,
+            data: null,
+            echo: data.echo,
+          },
+        ]);
+      },
+      set_group_ban(vue, data) {
+        vue.$store.dispatch("appendMessage", {
+          position: "center",
+          msg: `群${data.params.group_id}禁言${data.params.user_id} ${data.params.duration}秒`,
+        });
+        vue.$socket.emit("event", [
+          "CQHTTP",
+          {
+            status: "success",
+            retcode: 1200,
+            data: null,
+            echo: data.echo,
+          },
+        ]);
+      },
+      set_group_anonymous_ban(vue, data) {
+        vue.$store.dispatch("appendMessage", {
+          position: "center",
+          msg: `群${data.params.group_id}禁言${
+            data.params.anonymous || data.params.anonymous_flag
+          } ${data.params.duration}秒`,
+        });
+        vue.$socket.emit("event", [
+          "CQHTTP",
+          {
+            status: "success",
+            retcode: 1200,
+            data: null,
+            echo: data.echo,
+          },
+        ]);
+      },
+      set_group_whole_ban(vue, data) {
+        vue.$store.dispatch("appendMessage", {
+          position: "center",
+          msg: `群${data.params.group_id}全员${
+            data.params.enable ? "" : "解除"
+          }禁言`,
+        });
+        vue.$socket.emit("event", [
+          "CQHTTP",
+          {
+            status: "success",
+            retcode: 1200,
+            data: null,
+            echo: data.echo,
+          },
+        ]);
+      },
+      set_group_admin(vue, data) {
+        vue.$store.dispatch("appendMessage", {
+          position: "center",
+          msg: `群${data.params.group_id}${
+            data.params.enable ? "设置" : "解除"
+          }${data.params.user_id}管理员`,
+        });
+        vue.$socket.emit("event", [
+          "CQHTTP",
+          {
+            status: "success",
+            retcode: 1200,
+            data: null,
+            echo: data.echo,
+          },
+        ]);
+      },
+      set_group_anonymous(vue, data) {
+        vue.$store.dispatch("appendMessage", {
+          position: "center",
+          msg: `群${data.params.group_id}${
+            data.params.enable ? "开启" : "关闭"
+          }匿名聊天`,
+        });
+        vue.$socket.emit("event", [
+          "CQHTTP",
+          {
+            status: "success",
+            retcode: 1200,
+            data: null,
+            echo: data.echo,
+          },
+        ]);
+      },
+      set_group_card(vue, data) {
+        vue.$store.dispatch("appendMessage", {
+          position: "center",
+          msg: `群${data.params.group_id} ${data.params.user_id}设置群名片为${data.params.card}`,
+        });
+        vue.$socket.emit("event", [
+          "CQHTTP",
+          {
+            status: "success",
+            retcode: 1200,
+            data: null,
+            echo: data.echo,
+          },
+        ]);
+      },
+      set_group_name(vue, data) {
+        vue.$store.dispatch("appendMessage", {
+          position: "center",
+          msg: `群${data.params.group_id}设置群名为${data.params.group_name}`,
+        });
+        vue.$socket.emit("event", [
+          "CQHTTP",
+          {
+            status: "success",
+            retcode: 1200,
+            data: null,
+            echo: data.echo,
+          },
+        ]);
+      },
+      set_group_leave(vue, data) {
+        vue.$store.dispatch("appendMessage", {
+          position: "center",
+          msg: `${data.params.is_dismiss ? "解散" : "退出"}群${
+            data.params.group_id
+          }`,
+        });
+        vue.$socket.emit("event", [
+          "CQHTTP",
+          {
+            status: "success",
+            retcode: 1200,
+            data: null,
+            echo: data.echo,
+          },
+        ]);
+      },
+      set_group_special_title(vue, data) {
+        vue.$store.dispatch("appendMessage", {
+          position: "center",
+          msg: `群${data.params.group_id}设置${data.params.user_id}头衔为${data.params.special_title}`,
+        });
+        vue.$socket.emit("event", [
+          "CQHTTP",
+          {
+            status: "success",
+            retcode: 1200,
+            data: null,
+            echo: data.echo,
+          },
+        ]);
+      },
+      set_friend_add_request(vue, data) {
+        vue.$store.dispatch("appendMessage", {
+          position: "center",
+          msg: `${data.params.approve ? "通过" : "拒绝"}了${
+            data.params.flag
+          }的好友请求`,
+        });
+        vue.$socket.emit("event", [
+          "CQHTTP",
+          {
+            status: "success",
+            retcode: 1200,
+            data: null,
+            echo: data.echo,
+          },
+        ]);
+      },
+      set_group_add_request(vue, data) {
+        vue.$store.dispatch("appendMessage", {
+          position: "center",
+          msg: `${data.params.approve ? "通过" : "拒绝"}了${
+            data.params.flag
+          }的加群请求`,
+        });
+        vue.$socket.emit("event", [
+          "CQHTTP",
+          {
+            status: "success",
+            retcode: 1200,
+            data: null,
+            echo: data.echo,
+          },
+        ]);
+      },
     },
   },
   // Mirai: {},
