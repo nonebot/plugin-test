@@ -33,12 +33,25 @@
         <v-divider></v-divider>
         <v-card-text>
           <!-- TODO: Settings -->
-          <v-form ref="itemForm" lazy-validation></v-form>
+          <v-form ref="itemForm" lazy-validation>
+            <v-row>
+              <v-col cols="12" sm="6" md="4">
+                <v-text-field outlined dense label="self_id"></v-text-field>
+              </v-col>
+              <v-col cols="12" sm="6" md="4">
+                <v-text-field
+                  outlined
+                  dense
+                  label="access_token"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </v-form>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn outlined @click="settingModal = false">取消</v-btn>
-          <v-btn outlined color="success">确定</v-btn>
+          <v-btn outlined color="success">保存</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

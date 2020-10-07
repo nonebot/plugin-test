@@ -22,7 +22,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn href="https://docs.nonebot.dev/" target="_blank" text>
+      <v-btn href="https://v2.nonebot.dev/" target="_blank" text>
         <span class="mr-2">NoneBot</span>
         <v-icon small>fa-external-link-alt</v-icon>
       </v-btn>
