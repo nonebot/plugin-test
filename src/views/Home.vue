@@ -96,7 +96,7 @@
               </div>
             </v-expansion-panel-content>
           </v-expansion-panel>
-          <!-- TODO: Config Panel -->
+          <!-- Config Panel -->
           <v-expansion-panel>
             <v-expansion-panel-header>
               <template v-slot:default> Config Overview </template>

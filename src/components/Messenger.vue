@@ -19,17 +19,30 @@
           <v-col class="text-right">
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
-                <v-btn class="mr-2" icon small v-bind="attrs" v-on="on"
-                  ><v-icon small>fa-terminal</v-icon></v-btn
+                <v-btn
+                  class="mr-2"
+                  icon
+                  small
+                  v-bind="attrs"
+                  v-on="on"
+                  disabled
                 >
+                  <v-icon small>fa-terminal</v-icon>
+                </v-btn>
               </template>
               <span>Terminal</span>
             </v-tooltip>
             <v-tooltip top>
               <template v-slot:activator="{ on, attrs }">
-                <v-btn icon small v-bind="attrs" v-on="on"
-                  ><v-icon small>fa-trash-alt</v-icon></v-btn
+                <v-btn
+                  icon
+                  small
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="clearMessages()"
                 >
+                  <v-icon small>fa-trash-alt</v-icon>
+                </v-btn>
               </template>
               <span>Clear</span>
             </v-tooltip>
@@ -186,6 +199,9 @@ export default {
           $(".chat").offset().top -
           350;
       };
+    },
+    clearMessages() {
+      this.$store.dispatch("clearMessages");
     },
   },
   mounted() {

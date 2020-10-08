@@ -632,6 +632,13 @@ const templates = {
           meta_event_type: "lifecycle",
           sub_type: "{{ sub_type }}",
         },
+        action: (vue, data) => {
+          vue.$store.dispatch("appendMessage", {
+            position: "center",
+            msg: `元事件lifecycle`,
+            data,
+          });
+        },
       },
       meta_heartbeat: {
         text: "心跳",
@@ -668,6 +675,13 @@ const templates = {
             good: "{{ online }}",
           },
           interval: "{{ parseInt(interval) }}",
+        },
+        action: (vue, data) => {
+          vue.$store.dispatch("appendMessage", {
+            position: "center",
+            msg: `元事件heartbeat`,
+            data,
+          });
         },
       },
     },

@@ -69,8 +69,11 @@ export default new Vuex.Store({
     },
     deleteMessage: (state, payload) => {
       if (payload) {
-        Vue.delete(state, payload);
+        Vue.delete(state.messages, payload);
       }
+    },
+    clearMessages: (state) => {
+      state.messages = [];
     },
     updateEnv: (state, payload) => {
       if (payload) {
@@ -111,6 +114,9 @@ export default new Vuex.Store({
     },
     deleteMessage: ({ commit }, payload) => {
       commit("deleteMessage", payload);
+    },
+    clearMessages: ({ commit }) => {
+      commit("clearMessages");
     },
     updateEnv: ({ commit }, payload) => {
       commit("updateEnv", payload);

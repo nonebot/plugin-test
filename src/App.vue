@@ -104,6 +104,7 @@ export default {
       "updateEnv",
       restoreEnv || {
         self_id: "12345678",
+        access_token: "",
         senders: {
           12345678: {
             user_id: 12345678,
