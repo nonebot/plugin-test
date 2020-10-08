@@ -10,5 +10,4 @@ class AutoEncoder(json.JSONEncoder):
         try:
             return super().default(o)
         except Exception as e:
-            print(e)
             return str(o)
