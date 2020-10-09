@@ -11,8 +11,9 @@ function CQArray2Text(array) {
     } else {
       text += "[CQ:" + segment.type;
       for (let key of Object.keys(segment.data)) {
-        text += key + "=" + segment.data[key];
+        text += `,${key}=${segment.data[key]}`;
       }
+      text += "]";
     }
   }
   return text;
