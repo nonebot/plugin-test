@@ -205,6 +205,15 @@ export default {
             `Adapter ${data[0]} API ${data[1].action} Not Found`,
             "Unknow API!"
           );
+          this.$socket.emit("event", [
+            data[0],
+            {
+              status: "failed",
+              retcode: 1404,
+              data: null,
+              echo: data.echo,
+            },
+          ]);
         } else {
           this.templates[data[0]].apis[data[1].action](this, data[1]);
         }
