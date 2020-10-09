@@ -1009,6 +1009,68 @@ const templates = {
           },
         ]);
       },
+      get_login_info(vue, data) {
+        vue.$store.dispatch("appendMessage", {
+          position: "center",
+          msg: `获取登录号信息`,
+        });
+        let self_id = vue.$store.state.envs.self_id;
+        let self_info = vue.$store.state.envs.senders[self_id];
+        vue.$socket.emit("event", [
+          "CQHTTP",
+          {
+            status: "success",
+            retcode: 1200,
+            data: {
+              user_id: self_id,
+              nickname: self_info ? self_info.nickname : "Unknown",
+            },
+            echo: data.echo,
+          },
+        ]);
+      },
+      get_stranger_info(vue, data) {
+        vue.$store.dispatch("appendMessage", {
+          position: "center",
+          msg: `获取陌生人${data.params.user_id}信息`,
+        });
+        let self_info = vue.$store.state.envs.senders[data.params.user_id];
+        vue.$socket.emit("event", [
+          "CQHTTP",
+          {
+            status: "success",
+            retcode: 1200,
+            data: {
+              user_id: data.params.user_id,
+              nickname: self_info ? self_info.nickname : "Unknown",
+              sex: self_info ? self_info.sex : "unknown",
+              age: self_info ? self_info.age : "unknown",
+            },
+            echo: data.echo,
+          },
+        ]);
+      },
+      get_stranger_info(vue, data) {
+        vue.$store.dispatch("appendMessage", {
+          position: "center",
+          msg: `获取好友列表`,
+        });
+        let friends = Object.values(vue.$store.state.envs.senders);
+        friends.forEach((friend) => ({
+          user_id: friend.user_id,
+          nickname: friend.nickname,
+          remark: friend.nickname,
+        }));
+        vue.$socket.emit("event", [
+          "CQHTTP",
+          {
+            status: "success",
+            retcode: 1200,
+            data: friends,
+            echo: data.echo,
+          },
+        ]);
+      },
     },
   },
   // Mirai: {},
