@@ -36,7 +36,7 @@ npm run serve
 
 下面介绍一下如何连接到已有的 `nonebot2` 项目上。
 
-由于开启了 `webpack-dev-server` 中的 `writeToDisk` 选项，`devServer` 会将每次编译产生的文件写入 `./nonebot_test/dist` 文件夹。
+由于开启了 [`devServer`](https://cli.vuejs.org/zh/config/#devserver) 中的 `writeToDisk` 选项， `webpack-dev-server` 会将每次编译产生的文件写入 `./nonebot_test/dist` 文件夹。
 
 打开你的 bot 源码目录以及虚拟环境，将原来已经安装的 `nonebot-test` 包移除掉：
 
