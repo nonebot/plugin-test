@@ -69,3 +69,5 @@ async def disconnect(sid):
 async def handle_event(sid, data):
     session = await sio.get_session(sid)
     await websocket.put(session["self_id"], data)
+
+init()

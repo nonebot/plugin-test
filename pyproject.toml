@@ -1,14 +1,14 @@
 [tool.poetry]
-name = "nonebot-test"
+name = "nonebot-plugin-test"
 version = "0.1.0"
 description = "Test frontend for nonebot v2+"
 authors = ["yanyongyu <yanyongyu_1@126.com>"]
 license = "MIT"
 readme = "README.md"
 homepage = "https://v2.nonebot.dev/"
-repository = "https://github.com/nonebot/nonebot-test"
-keywords = ["nonebot", "qq", "qqbot", "mirai", "coolq"]
-include = ["nonebot_test/dist/**/*"]
+repository = "https://github.com/nonebot/plugin-test"
+keywords = ["nonebot", "qq", "qqbot", "mirai", "cqhttp"]
+include = ["nonebot_plugin_test/dist/**/*"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
