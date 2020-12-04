@@ -9,7 +9,7 @@ from nonebot import get_driver
 from nonebot.log import logger
 from socketio.exceptions import ConnectionRefusedError
 
-from nonebot_test.view import WebSocket, handle_ws_reverse
+from nonebot_plugin_test.view import WebSocket, handle_ws_reverse
 
 sio = socketio.AsyncServer(async_mode="asgi")
 socket_app = socketio.ASGIApp(sio, socketio_path="socket")
@@ -18,7 +18,8 @@ socket_app = socketio.ASGIApp(sio, socketio_path="socket")
 def init():
     driver = get_driver()
     try:
-        _module = importlib.import_module(f"nonebot_test.drivers.{driver.type}")
+        _module = importlib.import_module(
+            f"nonebot_plugin_test.drivers.{driver.type}")
     except ImportError:
         logger.warning(f"Driver {driver.type} not supported")
         return
@@ -69,5 +70,6 @@ async def disconnect(sid):
 async def handle_event(sid, data):
     session = await sio.get_session(sid)
     await websocket.put(session["self_id"], data)
+
 
 init()

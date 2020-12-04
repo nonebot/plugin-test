@@ -15,7 +15,7 @@ from nonebot.drivers import BaseWebSocket
 from nonebot.utils import DataclassEncoder
 from nonebot.plugin import get_loaded_plugins
 
-from nonebot_test.utils import AutoEncoder
+from nonebot_plugin_test.utils import AutoEncoder
 
 current_adapter = ContextVar("current_adapter")
 

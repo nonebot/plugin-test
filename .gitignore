@@ -147,7 +147,7 @@ dmypy.json
 ### Vuejs ###
 .DS_Store
 node_modules
-nonebot_test/dist
+nonebot_plugin_test/dist
 
 # local env files
 .env.local
