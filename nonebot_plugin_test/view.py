@@ -5,15 +5,14 @@ import os
 import json
 import asyncio
 from contextvars import ContextVar
-from nonebot import adapters
 
 import socketio
 from nonebot.log import logger
 from nonebot import get_driver
 from nonebot.matcher import matchers
-from nonebot.drivers import BaseWebSocket
 from nonebot.utils import DataclassEncoder
 from nonebot.plugin import get_loaded_plugins
+from nonebot.drivers import WebSocket as BaseWebSocket
 
 from nonebot_plugin_test.utils import AutoEncoder
 
