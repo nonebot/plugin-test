@@ -3,6 +3,8 @@
 
 import json
 
+WEBSOCKET_CLOSE = ["websocket.close", {}]
+
 
 class AutoEncoder(json.JSONEncoder):
 

@@ -14,7 +14,7 @@ from nonebot.utils import DataclassEncoder
 from nonebot.plugin import get_loaded_plugins
 from nonebot.drivers import WebSocket as BaseWebSocket
 
-from nonebot_plugin_test.utils import AutoEncoder
+from nonebot_plugin_test.utils import AutoEncoder, WEBSOCKET_CLOSE
 
 current_adapter = ContextVar("current_adapter")
 
@@ -24,9 +24,6 @@ class WebSocket(BaseWebSocket):
     def __init__(self, sio: socketio.AsyncServer):
         self.clients = {}
         super().__init__(sio)
-
-    def closed(self, self_id) -> bool:
-        return not bool(self.clients.get(self_id))
 
     async def accept(self):
         raise NotImplementedError
@@ -63,33 +60,38 @@ async def _bot_handle_message(bot, adapter, data):
             bot.self_id) and bot.websocket.clients[bot.self_id].task_done()
 
 
-async def handle_ws_reverse(websocket: WebSocket, self_id: str):
+async def _bot_check_permission():
+    pass
+
+
+async def handle_ws_reverse(websocket: WebSocket, sid: str, environ: dict):
     driver = get_driver()
 
-    while not websocket.closed(self_id):
-        data = await websocket.receive(self_id)
+    while True:
+        data = await websocket.receive(sid)
+
+        if data == WEBSOCKET_CLOSE:
+            del websocket.clients[sid]
+            return
 
         adapter = data[0]
         data = data[1]
 
-        if adapter == "websocket.close":
-            continue
+        # if adapter.lower() in driver._adapters:
+        #     BotClass = driver._adapters[adapter.lower()]
+        #     bot = BotClass(driver,
+        #                    "websocket",
+        #                    driver.config,
+        #                    self_id,
+        #                    websocket=websocket)
+        # else:
+        #     await websocket.websocket.emit("exception",
+        #                                    {"message": "Unknown Adapter"})
+        #     continue
 
-        if adapter.lower() in driver._adapters:
-            BotClass = driver._adapters[adapter.lower()]
-            bot = BotClass(driver,
-                           "websocket",
-                           driver.config,
-                           self_id,
-                           websocket=websocket)
-        else:
-            await websocket.websocket.emit("exception",
-                                           {"message": "Unknown Adapter"})
-            continue
+        # driver._clients[self_id] = bot
 
-        driver._clients[self_id] = bot
-
-        asyncio.create_task(_bot_handle_message(bot, adapter, data))
+        # asyncio.create_task(_bot_handle_message(bot, adapter, data))
 
 
 async def handle_project_info():
