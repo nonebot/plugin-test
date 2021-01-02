@@ -11,6 +11,7 @@ from nonebot.log import logger
 from nonebot import get_driver
 from nonebot.matcher import matchers
 from nonebot.utils import DataclassEncoder
+from nonebot.exception import RequestDenied
 from nonebot.plugin import get_loaded_plugins
 from nonebot.drivers import WebSocket as BaseWebSocket
 
@@ -31,11 +32,11 @@ class WebSocket(BaseWebSocket):
     async def close(self):
         raise NotImplementedError
 
-    async def receive(self, self_id) -> list:
-        return await self.clients[self_id].get()
+    async def receive(self, sid) -> list:
+        return await self.clients[sid].get()
 
-    async def put(self, self_id, data: list):
-        await self.clients[self_id].put(data)
+    async def put(self, sid, data: list):
+        await self.clients[sid].put(data)
 
     async def send(self, data: dict):
         text = json.dumps(data, cls=DataclassEncoder)
@@ -43,8 +44,7 @@ class WebSocket(BaseWebSocket):
         await self.websocket.emit("api", [current_adapter.get(), data])
 
 
-async def _bot_handle_message(bot, adapter, data):
-    driver = get_driver()
+async def _bot_handle_message(sid, bot, adapter, data):
     a_t = current_adapter.set(adapter)
 
     try:
@@ -53,15 +53,9 @@ async def _bot_handle_message(bot, adapter, data):
         logger.error(e)
     finally:
         current_adapter.reset(a_t)
-        if "post_type" in data:
-            del driver._clients[bot.self_id]
 
         bot.websocket.clients.get(
-            bot.self_id) and bot.websocket.clients[bot.self_id].task_done()
-
-
-async def _bot_check_permission():
-    pass
+            sid) and bot.websocket.clients[sid].task_done()
 
 
 async def handle_ws_reverse(websocket: WebSocket, sid: str, environ: dict):
@@ -77,21 +71,34 @@ async def handle_ws_reverse(websocket: WebSocket, sid: str, environ: dict):
         adapter = data[0]
         data = data[1]
 
-        # if adapter.lower() in driver._adapters:
-        #     BotClass = driver._adapters[adapter.lower()]
-        #     bot = BotClass(driver,
-        #                    "websocket",
-        #                    driver.config,
-        #                    self_id,
-        #                    websocket=websocket)
-        # else:
-        #     await websocket.websocket.emit("exception",
-        #                                    {"message": "Unknown Adapter"})
-        #     continue
+        if adapter.lower() not in driver._adapters:
+            await websocket.websocket.emit("exception",
+                                           {"message": "Unknown Adapter"})
+            continue
 
-        # driver._clients[self_id] = bot
+        BotClass = driver._adapters[adapter.lower()]
+        headers = {
+            k.lower()[5:] if k.startswith("HTTP_") else k.lower(): v
+            for k, v in environ.items()
+        }
+        try:
+            self_id = await BotClass.check_permission(driver, "websocket",
+                                                      headers, None)
+        except RequestDenied:
+            await websocket.websocket.emit(
+                "exception",
+                {"message": f"Adapter {BotClass.type} permission denied"})
+            continue
 
-        # asyncio.create_task(_bot_handle_message(bot, adapter, data))
+        bot = BotClass(driver,
+                       "websocket",
+                       driver.config,
+                       self_id,
+                       websocket=websocket)
+
+        driver._clients[self_id] = bot
+
+        asyncio.create_task(_bot_handle_message(sid, bot, adapter, data))
 
 
 async def handle_project_info():
