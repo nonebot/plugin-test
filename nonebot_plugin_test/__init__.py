@@ -7,7 +7,7 @@ from asyncio import Queue
 import socketio
 from nonebot import get_driver
 from nonebot.log import logger
-from socketio.exceptions import ConnectionRefusedError
+# from socketio.exceptions import ConnectionRefusedError
 
 from nonebot_plugin_test.view import WebSocket, handle_ws_reverse
 from nonebot_plugin_test.utils import WEBSOCKET_CLOSE

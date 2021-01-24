@@ -3,6 +3,7 @@
 
 import os
 import json
+import random
 import asyncio
 from contextvars import ContextVar
 
@@ -11,7 +12,6 @@ from nonebot.log import logger
 from nonebot import get_driver
 from nonebot.matcher import matchers
 from nonebot.utils import DataclassEncoder
-from nonebot.exception import RequestDenied
 from nonebot.plugin import get_loaded_plugins
 from nonebot.drivers import WebSocket as BaseWebSocket
 
@@ -77,24 +77,10 @@ async def handle_ws_reverse(websocket: WebSocket, sid: str, environ: dict):
             continue
 
         BotClass = driver._adapters[adapter.lower()]
-        headers = {
-            k.lower()[5:] if k.startswith("HTTP_") else k.lower(): v
-            for k, v in environ.items()
-        }
-        try:
-            self_id = await BotClass.check_permission(driver, "websocket",
-                                                      headers, None)
-        except RequestDenied:
-            await websocket.websocket.emit(
-                "exception",
-                {"message": f"Adapter {BotClass.type} permission denied"})
-            continue
+        self_id = environ.get("HTTP_X_SELF_ID",
+                              str(random.randint(10000000, 20000000)))
 
-        bot = BotClass(driver,
-                       "websocket",
-                       driver.config,
-                       self_id,
-                       websocket=websocket)
+        bot = BotClass("websocket", self_id, websocket=websocket)
 
         driver._clients[self_id] = bot
 

@@ -14,7 +14,7 @@ export default new Vuex.Store({
 
     envs: {
       self_id: "",
-      access_token: "",
+      // access_token: "",
       senders: {},
     },
   },

@@ -44,14 +44,14 @@
                   v-model="tempEnvs.self_id"
                 ></v-text-field>
               </v-col>
-              <v-col cols="12" sm="6" md="4">
+              <!-- <v-col cols="12" sm="6" md="4">
                 <v-text-field
                   outlined
                   dense
                   label="access_token"
                   v-model="tempEnvs.access_token"
                 ></v-text-field>
-              </v-col>
+              </v-col> -->
               <v-col cols="12">
                 <v-toolbar flat dense>
                   <v-toolbar-title>Sender</v-toolbar-title>
@@ -190,7 +190,7 @@ export default {
     settingValid: true,
     tempEnvs: {
       self_id: "",
-      access_token: "",
+      // access_token: "",
       senders: {},
     },
     senderKeys: [
@@ -276,8 +276,9 @@ export default {
       this.settingModal = false;
       let reconnect = false;
       if (
-        this.tempEnvs.self_id !== this.envs.self_id ||
-        this.tempEnvs.access_token !== this.envs.access_token
+        this.tempEnvs.self_id !== this.envs.self_id
+        // this.tempEnvs.self_id !== this.envs.self_id ||
+        // this.tempEnvs.access_token !== this.envs.access_token
       ) {
         reconnect = true;
       }
@@ -286,13 +287,12 @@ export default {
         this.$socket.io.opts.transportOptions.polling.extraHeaders[
           "X-Self-ID"
         ] = this.$store.state.envs.self_id;
-        this.$socket.io.opts.transportOptions.polling.extraHeaders[
-          "Authorization"
-        ] = this.$store.state.envs.access_token;
+        // this.$socket.io.opts.transportOptions.polling.extraHeaders[
+        //   "Authorization"
+        // ] = this.$store.state.envs.access_token;
         if (this.$socket.connected) {
           this.$socket.disconnect();
         }
-        console.log(this.$socket);
         this.$socket.io.reconnecting = false;
         this.$socket.io.onclose();
       }
