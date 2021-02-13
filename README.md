@@ -20,6 +20,19 @@ _✨ 在浏览器中测试你的 NoneBot 机器人 ✨_
   <img src="https://img.shields.io/badge/python-3.7+-blue.svg" alt="python">
 </p>
 
+## 截屏展示
+
+<table>
+  <tr>
+    <td><img src="https://i.loli.net/2021/02/13/rsQ9hgwcxIARoZi.png" ></br><b>模块加载状态一览无余</b></td>
+    <td><img src="https://i.loli.net/2021/02/13/Mxi8bJdpkCQ1H2e.png" ></br><b>人性化的交互式测试</b></td>
+  </tr>
+  <tr>
+    <td><img src="https://i.loli.net/2021/02/13/qV3KxScQuHrj4Xe.png" ></br><b>消息匹配器图形化展示</b></td>
+    <td><img src="https://i.loli.net/2021/02/13/B1LkS2yApTPQxRU.png" ></br><b>可高度自定义的测试配置</b></td>
+  </tr>
+</table>
+
 ## 使用方法
 
 加载插件
