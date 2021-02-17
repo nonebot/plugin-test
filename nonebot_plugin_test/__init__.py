@@ -12,7 +12,7 @@ from nonebot.log import logger
 from nonebot_plugin_test.view import WebSocket, handle_ws_reverse
 from nonebot_plugin_test.utils import WEBSOCKET_CLOSE
 
-sio = socketio.AsyncServer(async_mode="asgi")
+sio = socketio.AsyncServer(async_mode="asgi", cors_allowed_origins="*")
 socket_app = socketio.ASGIApp(sio, socketio_path="socket")
 
 
