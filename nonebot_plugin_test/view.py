@@ -35,6 +35,9 @@ class WebSocket(BaseWebSocket):
     async def receive(self, sid) -> list:
         return await self.clients[sid].get()
 
+    async def receive_bytes(self) -> bytes:
+        raise NotImplementedError
+
     async def put(self, sid, data: list):
         await self.clients[sid].put(data)
 
@@ -42,6 +45,9 @@ class WebSocket(BaseWebSocket):
         text = json.dumps(data, cls=DataclassEncoder)
         data = json.loads(text)
         await self.websocket.emit("api", [current_adapter.get(), data])
+
+    async def send_bytes(self, data: bytes):
+        raise NotImplementedError
 
 
 async def _bot_handle_message(sid, bot, adapter, data):
