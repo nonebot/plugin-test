@@ -193,20 +193,20 @@ export default {
     api(data) {
       // data should be list type like: [adapter, data]
       try {
-        console.log(`[👇] Receive ${data[0]} API: ${JSON.stringify(data[1])}`);
-        if (!this.templates[data[0]]) {
-          console.log(`[!] Adapter ${data[0]} Not Found!`);
-          this.$toastr.error(`Adapter ${data[0]} Not Found`, "Unknow Adapter!");
-        } else if (!this.templates[data[0]].apis[data[1].action]) {
-          console.log(
-            `[!] Adapter ${data[0]} API ${data[1].action} Not Found!`
-          );
+        const [api, dataStr] = data;
+        const dataDict = JSON.parse(dataStr);
+        console.log(`[👇] Receive ${api} API: ${dataDict}`);
+        if (!this.templates[api]) {
+          console.log(`[!] Adapter ${api} Not Found!`);
+          this.$toastr.error(`Adapter ${api} Not Found`, "Unknow Adapter!");
+        } else if (!this.templates[api].apis[dataDict.action]) {
+          console.log(`[!] Adapter ${api} API ${dataDict.action} Not Found!`);
           this.$toastr.error(
-            `Adapter ${data[0]} API ${data[1].action} Not Found`,
+            `Adapter ${api} API ${dataDict.action} Not Found`,
             "Unknow API!"
           );
           this.$socket.emit("event", [
-            data[0],
+            api,
             {
               status: "failed",
               retcode: 1404,
@@ -215,7 +215,7 @@ export default {
             },
           ]);
         } else {
-          this.templates[data[0]].apis[data[1].action](this, data[1]);
+          this.templates[api].apis[dataDict.action](this, dataDict);
         }
       } catch (error) {
         console.error("[!] Error when parsing api request:", error);
@@ -235,7 +235,7 @@ export default {
         console.log(
           `[☝] Send ${this.adapter} Event: ${JSON.stringify(this.json)}`
         );
-        this.$socket.emit("event", [this.adapter, this.json]);
+        this.$socket.emit("event", [this.adapter, JSON.stringify(this.json)]);
         if (this.templates[this.adapter].events[this.event].action) {
           this.templates[this.adapter].events[this.event].action(
             this,

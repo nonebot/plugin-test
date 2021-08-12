@@ -12,6 +12,13 @@ from nonebot.log import logger
 from nonebot_plugin_test.view import WebSocket, handle_ws_reverse
 from nonebot_plugin_test.utils import WEBSOCKET_CLOSE
 
+TEST_HTML_PATH = "/test/"
+TEST_WS_PATH = "/test_ws/"
+TEST_INFO_PATH = "/test/info"
+TEST_PLUGIN_PATH = "/test/plugins"
+TEST_MATCHER_PATH = "/test/matchers"
+TEST_CONFIG_PATH = "/test/config"
+
 sio = socketio.AsyncServer(async_mode="asgi", cors_allowed_origins="*")
 socket_app = socketio.ASGIApp(sio, socketio_path="socket")
 
@@ -34,7 +41,7 @@ def init():
                                  f"<b><u>http://{host}:{port}/test/</u></b>")
 
 
-websocket = WebSocket(sio)
+websocket = WebSocket("1.1", "ws", TEST_WS_PATH, sio=sio)
 
 # @sio.event
 # async def connect(sid, environ):

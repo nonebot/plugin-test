@@ -11,13 +11,13 @@ keywords = ["nonebot", "qq", "qqbot", "mirai", "cqhttp"]
 include = ["nonebot_plugin_test/dist/**/*"]
 
 [tool.poetry.dependencies]
-python = "^3.7"
-aiofiles = "^0.6.0"
+python = "^3.7.3"
+aiofiles = "^0.7.0"
 python-socketio = "^4.6.1"
-nonebot2 = "^2.0.0-alpha.9"
+nonebot2 = "^2.0.0-alpha.14"
 
 [tool.poetry.dev-dependencies]
-yapf = "^0.30.0"
+yapf = "^0.31.0"
 # nonebot2 = { path = "../nonebot2", develop = true }
 
 # [[tool.poetry.source]]

@@ -60,7 +60,7 @@
                             <v-badge
                               inline
                               class="mt-0"
-                              :content="plugin.matcher"
+                              :content="plugin.matcher.toString()"
                             ></v-badge>
                           </v-list-item-title>
                         </v-list-item-content>
@@ -149,46 +149,6 @@ export default {
       dir: "",
     },
     plugins: [],
-    // matchers: {
-    //   0: [
-    //     {
-    //       type: "message",
-    //       module: "test_package",
-    //       handlers: 1,
-    //       priority: 0,
-    //       temp: true,
-    //       block: true,
-    //     },
-    //     {
-    //       type: "message",
-    //       module: "test_package",
-    //       handlers: 1,
-    //       priority: 0,
-    //       temp: true,
-    //       block: true,
-    //     },
-    //   ],
-    //   1: [
-    //     {
-    //       type: "message",
-    //       module: "test_package",
-    //       handlers: 1,
-    //       priority: 0,
-    //       temp: true,
-    //       block: true,
-    //     },
-    //   ],
-    //   2: [
-    //     {
-    //       type: "message",
-    //       module: "test_package",
-    //       handlers: 1,
-    //       priority: 0,
-    //       temp: true,
-    //       block: true,
-    //     },
-    //   ],
-    // },
     matchers: {},
     config: {},
 

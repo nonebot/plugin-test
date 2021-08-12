@@ -5,14 +5,17 @@ import os
 import json
 import random
 import asyncio
+from asyncio import Queue
+from typing import Dict, Type
 from contextvars import ContextVar
+from dataclasses import dataclass, field
 
 import socketio
 from nonebot.log import logger
 from nonebot import get_driver
-from nonebot.matcher import matchers
 from nonebot.utils import DataclassEncoder
-from nonebot.plugin import get_loaded_plugins
+from nonebot.matcher import matchers, Matcher
+from nonebot.plugin import get_loaded_plugins, Plugin
 from nonebot.drivers import WebSocket as BaseWebSocket
 
 from nonebot_plugin_test.utils import AutoEncoder, WEBSOCKET_CLOSE
@@ -20,11 +23,14 @@ from nonebot_plugin_test.utils import AutoEncoder, WEBSOCKET_CLOSE
 current_adapter = ContextVar("current_adapter")
 
 
+@dataclass
 class WebSocket(BaseWebSocket):
+    sio: socketio.AsyncServer = None  # type: ignore
+    clients: Dict[str, Queue] = field(default_factory=dict)
 
-    def __init__(self, sio: socketio.AsyncServer):
-        self.clients = {}
-        super().__init__(sio)
+    @property
+    def closed(self) -> bool:
+        raise NotImplementedError
 
     async def accept(self):
         raise NotImplementedError
@@ -32,16 +38,20 @@ class WebSocket(BaseWebSocket):
     async def close(self):
         raise NotImplementedError
 
-    async def receive(self, sid) -> list:
+    async def receive(self, sid: str) -> list:
         return await self.clients[sid].get()
+
+    async def receive_bytes(self):
+        raise NotImplementedError
 
     async def put(self, sid, data: list):
         await self.clients[sid].put(data)
 
-    async def send(self, data: dict):
-        text = json.dumps(data, cls=DataclassEncoder)
-        data = json.loads(text)
-        await self.websocket.emit("api", [current_adapter.get(), data])
+    async def send(self, data: str):
+        await self.sio.emit("api", [current_adapter.get(), data])
+
+    async def send_bytes(self, data: bytes):
+        raise NotImplementedError
 
 
 async def _bot_handle_message(sid, bot, adapter, data):
@@ -54,8 +64,7 @@ async def _bot_handle_message(sid, bot, adapter, data):
     finally:
         current_adapter.reset(a_t)
 
-        bot.websocket.clients.get(
-            sid) and bot.websocket.clients[sid].task_done()
+        bot.request.clients.get(sid) and bot.request.clients[sid].task_done()
 
 
 async def handle_ws_reverse(websocket: WebSocket, sid: str, environ: dict):
@@ -72,15 +81,15 @@ async def handle_ws_reverse(websocket: WebSocket, sid: str, environ: dict):
         data = data[1]
 
         if adapter.lower() not in driver._adapters:
-            await websocket.websocket.emit("exception",
-                                           {"message": "Unknown Adapter"})
+            await websocket.sio.emit("exception",
+                                     {"message": "Unknown Adapter"})
             continue
 
         BotClass = driver._adapters[adapter.lower()]
         self_id = environ.get("HTTP_X_SELF_ID",
                               str(random.randint(10000000, 20000000)))
 
-        bot = BotClass("websocket", self_id, websocket=websocket)
+        bot = BotClass(self_id, websocket)
 
         driver._clients[self_id] = bot
 
@@ -95,7 +104,7 @@ async def handle_project_info():
 async def handle_getting_plugins():
     plugins = get_loaded_plugins()
 
-    def _plugin_to_dict(plugin):
+    def _plugin_to_dict(plugin: Plugin):
         return {
             "name": plugin.name,
             "module": plugin.module.__file__,
@@ -108,10 +117,10 @@ async def handle_getting_plugins():
 async def handle_getting_matchers():
     matcher_dict = {}
 
-    def _matcher_to_dict(matcher):
+    def _matcher_to_dict(matcher: Type[Matcher]):
         return {
             "type": matcher.type,
-            "module": matcher.module,
+            "module": matcher.module_name,
             "handlers": len(matcher.handlers),
             "priority": matcher.priority,
             "temp": matcher.temp or bool(matcher.expire_time),

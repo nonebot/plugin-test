@@ -697,14 +697,14 @@ const templates = {
         });
         vue.$socket.emit("event", [
           "CQHTTP",
-          {
+          JSON.stringify({
             status: "success",
             retcode: 1200,
             data: {
               message_id: vue.$store.state.messages.length,
             },
             echo: data.echo,
-          },
+          }),
         ]);
       },
       send_group_msg(vue, data) {
@@ -717,14 +717,14 @@ const templates = {
         });
         vue.$socket.emit("event", [
           "CQHTTP",
-          {
+          JSON.stringify({
             status: "success",
             retcode: 1200,
             data: {
               message_id: vue.$store.state.messages.length,
             },
             echo: data.echo,
-          },
+          }),
         ]);
       },
       send_msg(vue, data) {
@@ -737,55 +737,55 @@ const templates = {
         });
         vue.$socket.emit("event", [
           "CQHTTP",
-          {
+          JSON.stringify({
             status: "success",
             retcode: 1200,
             data: {
               message_id: vue.$store.state.messages.length,
             },
             echo: data.echo,
-          },
+          }),
         ]);
       },
       delete_msg(vue, data) {
         if (data.params.message_id >= vue.$store.state.messages.length) {
           vue.$socket.emit("event", [
             "CQHTTP",
-            {
+            JSON.stringify({
               status: "failed",
               retcode: 1404,
               data: null,
               echo: data.echo,
-            },
+            }),
           ]);
         }
         vue.$store.dispatch("deleteMessage", data.params.message_id);
         vue.$socket.emit("event", [
           "CQHTTP",
-          {
+          JSON.stringify({
             status: "success",
             retcode: 1200,
             data: null,
             echo: data.echo,
-          },
+          }),
         ]);
       },
       get_msg(vue, data) {
         if (data.params.message_id >= vue.$store.state.messages.length) {
           vue.$socket.emit("event", [
             "CQHTTP",
-            {
+            JSON.stringify({
               status: "failed",
               retcode: 1404,
               data: null,
               echo: data.echo,
-            },
+            }),
           ]);
         }
         const message = vue.$store.state.messages[data.params.message_id];
         vue.$socket.emit("event", [
           "CQHTTP",
-          {
+          JSON.stringify({
             status: "success",
             retcode: 1200,
             data: {
@@ -797,7 +797,7 @@ const templates = {
               message: message.message,
             },
             echo: data.echo,
-          },
+          }),
         ]);
       },
       send_like(vue, data) {
@@ -807,12 +807,12 @@ const templates = {
         });
         vue.$socket.emit("event", [
           "CQHTTP",
-          {
+          JSON.stringify({
             status: "success",
             retcode: 1200,
             data: null,
             echo: data.echo,
-          },
+          }),
         ]);
       },
       set_group_kick(vue, data) {
@@ -822,12 +822,12 @@ const templates = {
         });
         vue.$socket.emit("event", [
           "CQHTTP",
-          {
+          JSON.stringify({
             status: "success",
             retcode: 1200,
             data: null,
             echo: data.echo,
-          },
+          }),
         ]);
       },
       set_group_ban(vue, data) {
@@ -837,12 +837,12 @@ const templates = {
         });
         vue.$socket.emit("event", [
           "CQHTTP",
-          {
+          JSON.stringify({
             status: "success",
             retcode: 1200,
             data: null,
             echo: data.echo,
-          },
+          }),
         ]);
       },
       set_group_anonymous_ban(vue, data) {
@@ -854,12 +854,12 @@ const templates = {
         });
         vue.$socket.emit("event", [
           "CQHTTP",
-          {
+          JSON.stringify({
             status: "success",
             retcode: 1200,
             data: null,
             echo: data.echo,
-          },
+          }),
         ]);
       },
       set_group_whole_ban(vue, data) {
@@ -871,12 +871,12 @@ const templates = {
         });
         vue.$socket.emit("event", [
           "CQHTTP",
-          {
+          JSON.stringify({
             status: "success",
             retcode: 1200,
             data: null,
             echo: data.echo,
-          },
+          }),
         ]);
       },
       set_group_admin(vue, data) {
@@ -888,12 +888,12 @@ const templates = {
         });
         vue.$socket.emit("event", [
           "CQHTTP",
-          {
+          JSON.stringify({
             status: "success",
             retcode: 1200,
             data: null,
             echo: data.echo,
-          },
+          }),
         ]);
       },
       set_group_anonymous(vue, data) {
@@ -905,12 +905,12 @@ const templates = {
         });
         vue.$socket.emit("event", [
           "CQHTTP",
-          {
+          JSON.stringify({
             status: "success",
             retcode: 1200,
             data: null,
             echo: data.echo,
-          },
+          }),
         ]);
       },
       set_group_card(vue, data) {
@@ -920,12 +920,12 @@ const templates = {
         });
         vue.$socket.emit("event", [
           "CQHTTP",
-          {
+          JSON.stringify({
             status: "success",
             retcode: 1200,
             data: null,
             echo: data.echo,
-          },
+          }),
         ]);
       },
       set_group_name(vue, data) {
@@ -935,12 +935,12 @@ const templates = {
         });
         vue.$socket.emit("event", [
           "CQHTTP",
-          {
+          JSON.stringify({
             status: "success",
             retcode: 1200,
             data: null,
             echo: data.echo,
-          },
+          }),
         ]);
       },
       set_group_leave(vue, data) {
@@ -952,12 +952,12 @@ const templates = {
         });
         vue.$socket.emit("event", [
           "CQHTTP",
-          {
+          JSON.stringify({
             status: "success",
             retcode: 1200,
             data: null,
             echo: data.echo,
-          },
+          }),
         ]);
       },
       set_group_special_title(vue, data) {
@@ -967,12 +967,12 @@ const templates = {
         });
         vue.$socket.emit("event", [
           "CQHTTP",
-          {
+          JSON.stringify({
             status: "success",
             retcode: 1200,
             data: null,
             echo: data.echo,
-          },
+          }),
         ]);
       },
       set_friend_add_request(vue, data) {
@@ -984,12 +984,12 @@ const templates = {
         });
         vue.$socket.emit("event", [
           "CQHTTP",
-          {
+          JSON.stringify({
             status: "success",
             retcode: 1200,
             data: null,
             echo: data.echo,
-          },
+          }),
         ]);
       },
       set_group_add_request(vue, data) {
@@ -1001,12 +1001,12 @@ const templates = {
         });
         vue.$socket.emit("event", [
           "CQHTTP",
-          {
+          JSON.stringify({
             status: "success",
             retcode: 1200,
             data: null,
             echo: data.echo,
-          },
+          }),
         ]);
       },
       get_login_info(vue, data) {
@@ -1018,7 +1018,7 @@ const templates = {
         let self_info = vue.$store.state.envs.senders[self_id];
         vue.$socket.emit("event", [
           "CQHTTP",
-          {
+          JSON.stringify({
             status: "success",
             retcode: 1200,
             data: {
@@ -1026,7 +1026,7 @@ const templates = {
               nickname: self_info ? self_info.nickname : "Unknown",
             },
             echo: data.echo,
-          },
+          }),
         ]);
       },
       get_stranger_info(vue, data) {
@@ -1037,7 +1037,7 @@ const templates = {
         let self_info = vue.$store.state.envs.senders[data.params.user_id];
         vue.$socket.emit("event", [
           "CQHTTP",
-          {
+          JSON.stringify({
             status: "success",
             retcode: 1200,
             data: {
@@ -1047,7 +1047,7 @@ const templates = {
               age: self_info ? self_info.age : "unknown",
             },
             echo: data.echo,
-          },
+          }),
         ]);
       },
       get_stranger_info(vue, data) {
@@ -1063,12 +1063,12 @@ const templates = {
         }));
         vue.$socket.emit("event", [
           "CQHTTP",
-          {
+          JSON.stringify({
             status: "success",
             retcode: 1200,
             data: friends,
             echo: data.echo,
-          },
+          }),
         ]);
       },
     },
