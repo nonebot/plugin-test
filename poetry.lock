@@ -208,7 +208,7 @@ dev = ["codecov (>=2.0.15)", "colorama (>=0.3.4)", "flake8 (>=3.7.7)", "tox (>=3
 
 [[package]]
 name = "nonebot2"
-version = "2.0.0a14"
+version = "2.0.0a15"
 description = "An asynchronous python bot framework."
 category = "main"
 optional = false
@@ -532,8 +532,8 @@ loguru = [
     {file = "loguru-0.5.3.tar.gz", hash = "sha256:b28e72ac7a98be3d28ad28570299a393dfcd32e5e3f6a353dec94675767b6319"},
 ]
 nonebot2 = [
-    {file = "nonebot2-2.0.0a14-py3-none-any.whl", hash = "sha256:2f25409917b82a01df06e794a893b71bbde18aeec087c354cbd60e67ae481d2c"},
-    {file = "nonebot2-2.0.0a14.tar.gz", hash = "sha256:d5e287a1a427d3106f0af205e4bdbe068a5ae2b72edef83fd470b3d7ae49ac3c"},
+    {file = "nonebot2-2.0.0a15-py3-none-any.whl", hash = "sha256:bc5c99bacf2864c84b8cd186c92a9850489f69354a5467c047b0210c4f4a20da"},
+    {file = "nonebot2-2.0.0a15.tar.gz", hash = "sha256:f8fb5e58a3e5b08f985d46b01798f14654e66d0cab34e73e5c5ae4ddb4a4db67"},
 ]
 pydantic = [
     {file = "pydantic-1.8.2-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:05ddfd37c1720c392f4e0d43c484217b7521558302e7069ce8d318438d297739"},

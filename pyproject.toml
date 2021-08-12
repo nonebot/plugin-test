@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nonebot-plugin-test"
-version = "0.2.0"
+version = "0.3.0"
 description = "Test frontend for nonebot v2+"
 authors = ["yanyongyu <yanyongyu_1@126.com>"]
 license = "MIT"
